@@ -12,6 +12,8 @@ const GridMaterial = shaderMaterial(
     fadeStrength: 1,
     cellThickness: 0.5,
     sectionThickness: 1,
+		circleGridMaxRadius: 9,
+		gridType: 0,
     cellColor: new THREE.Color(),
     sectionColor: new THREE.Color(),
     infiniteGrid: false,
@@ -55,6 +57,10 @@ const GridMaterial = shaderMaterial(
     uniform float fadeStrength;
     uniform float cellThickness;
     uniform float sectionThickness;
+		uniform float circleGridMaxRadius;
+
+		// 0 - default; 1 - lines (not implemented); 2 - circles; 3 - polar (not implemented)
+		uniform int gridType;
 
     float getGrid(float size, float thickness) {
       vec2 r = localPosition.xz / size;
@@ -65,20 +71,30 @@ const GridMaterial = shaderMaterial(
 
 		// From Threlte, modified
 		float getCirclesGrid(float size, float thickness) {
-			float uCircleGridMaxRadius = 100.;
+			if (thickness <= 0.0) {
+				return 0.0;
+			}
 			float r = length(localPosition.xz) / size;
-			// float coord = length(vec2(worldPosition[uCoord0], worldPosition[uCoord1])) / size;
-			// float line = abs(fract(coord - 0.5) - 0.5) / fwidth(coord) - thickness * 0.2;
 			float line = abs(fract(r - 0.5) - 0.5) / fwidth(r) - thickness * 0.2;
-			if(uCircleGridMaxRadius > 0. && r > uCircleGridMaxRadius + thickness * 0.05) discard;
+			if(circleGridMaxRadius > 0. && r > circleGridMaxRadius + thickness * 0.05) discard;
 			return 1.0 - min(line, 1.);
 		}
 
     void main() {
-      // float g1 = getGrid(cellSize, cellThickness);
-      // float g2 = getGrid(sectionSize, sectionThickness);
-			float g1 = getCirclesGrid(cellSize, cellThickness);
-			float g2 = getCirclesGrid(sectionSize, sectionThickness);
+			float g1 = 0.;
+			float g2 = 0.;
+
+			if(gridType == 0) {
+				g1 = getGrid(cellSize, cellThickness);
+				g2 = getGrid(sectionSize, sectionThickness);
+			}
+			else if(gridType == 2) {
+				g1 = getCirclesGrid(cellSize, cellThickness);
+				g2 = getCirclesGrid(sectionSize, sectionThickness);
+			}
+			else {
+				return;
+			}
 
       float dist = distance(worldCamProjPosition, worldPosition.xyz);
       float d = 1.0 - min(dist / fadeDistance, 1.0);
@@ -108,6 +124,8 @@ const Grid = React.forwardRef(
       fadeStrength = 1,
       cellThickness = 0.5,
       sectionThickness = 1,
+			circleGridMaxRadius = 9,
+			gridType = 0,
       side = THREE.DoubleSide,
       ...props
     },
@@ -130,8 +148,8 @@ const Grid = React.forwardRef(
       worldPlanePosition.set(0, 0, 0).applyMatrix4(ref.current.matrixWorld);
     });
 
-    const uniforms1 = { cellSize, sectionSize, cellColor, sectionColor, cellThickness, sectionThickness };
-    const uniforms2 = { fadeDistance, fadeStrength, infiniteGrid, followCamera };
+    const uniforms1 = { cellSize, sectionSize, cellColor, sectionColor, cellThickness, sectionThickness, circleGridMaxRadius };
+    const uniforms2 = { gridType, fadeDistance, fadeStrength, infiniteGrid, followCamera };
 
     return (
       <mesh ref={mergeRefs([ref, fRef])} frustumCulled={false} {...props}>

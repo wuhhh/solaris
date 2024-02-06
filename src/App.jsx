@@ -67,25 +67,27 @@ const SolarSystem = () => {
 		}, c),
 	}, c);
 
-	const { gridSize, ...gridConfig } = useControls({
+	const { gridSize, ...gridConfig } = useControls("Grid", {
     gridSize: [10.5, 10.5],
-    cellSize: { value: 0.6, min: 0, max: 10, step: 0.1 },
-    cellThickness: { value: 1, min: 0, max: 5, step: 0.1 },
-    cellColor: '#6f6f6f',
-    sectionSize: { value: 3.3, min: 0, max: 10, step: 0.1 },
-    sectionThickness: { value: 1.5, min: 0, max: 5, step: 0.1 },
+		gridType: { value: 2, options: { Grid: 0, Circles: 2 } },
+    cellSize: { value: 0.4, min: 0, max: 10, step: 0.1 },
+    cellThickness: { value: 1, min: 0, max: 100, step: 0.1 },
+    cellColor: '#555555',
+    sectionSize: { value: 0, min: 0, max: 10, step: 0.1 },
+    sectionThickness: { value: 0, min: 0, max: 100, step: 0.1 },
     sectionColor: '#9d4b4b',
-    fadeDistance: { value: 25, min: 0, max: 100, step: 1 },
+		circleGridMaxRadius: { value: 50, min: 1, max: 100, step: 1 },
+    fadeDistance: { value: 20, min: 0, max: 100, step: 1 },
     fadeStrength: { value: 1, min: 0, max: 1, step: 0.1 },
     followCamera: false,
     infiniteGrid: true
-  })
+  }, c)
 
   return <group>
 		{/* Sun */}
     <Sphere
 			ref={sunRef} 
-			args={[1, 32, 32]}
+			args={[1, 64, 64]}
 			position={systemData.sunPosition}
 			scale={[
 				systemData.sunScale,
@@ -116,7 +118,11 @@ const SolarSystem = () => {
 			<orbitRingMaterial />
 		</Plane> */}
 
-		<Grid position={[-width * .5, -0.01, 0]} args={gridSize} {...gridConfig} />
+		<Grid 
+			position={[-width * .5, -0.01, 0]} 
+			args={gridSize} 
+			{...gridConfig} 
+		/>
 
 	</group>;
 };
