@@ -1,0 +1,43 @@
+{
+  "name": "react-three-vite",
+  "version": "1.0.2",
+  "description": "A simple React Three Fiber + Vite starter with an import-ready CodeSandbox config.",
+  "keywords": [
+    "r3f",
+    "react",
+    "three",
+    "vite",
+    "starter",
+    "react three fiber",
+    "sandbox",
+    "codesandbox"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "@react-three/drei": "^9.97.0",
+    "@react-three/fiber": "^8.15.15",
+    "@react-three/postprocessing": "^2.15.12",
+    "postprocessing": "^7.0.0-alpha-1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "three": "^0.161.0",
+    "three-custom-shader-material": "^5.4.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "^4.0.4",
+    "leva": "^0.9.35",
+    "vite": "^4.4.9"
+  },
+  "scripts": {
+    "dev": "vite --host",
+    "sandbox": "APP_ENV=sandbox vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
