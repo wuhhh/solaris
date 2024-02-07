@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
-import { OrbitControls, Plane, Ring, Sphere, Stars } from "@react-three/drei";
+import { Float, OrbitControls, PerspectiveCamera, Plane, Ring, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
-import { Bloom, DepthOfField, EffectComposer, Noise } from "@react-three/postprocessing";
+import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import { Grid } from "./Grid";
 import "./OrbitRingMaterial";
 
@@ -59,6 +59,7 @@ const SolarSystem = () => {
 		general: folder({
 			genScaleMult: 2.5,
 			genPlanetSpacing: 0.4,
+			genTilt: 0.4,
 		}, c),
 		sun: folder({
 			sunPosition: [-width * 0.5, 0, 0],
@@ -106,7 +107,7 @@ const SolarSystem = () => {
 		}, c),
 	}, c);
 
-  return <group>
+  return <group rotation={[systemData.genTilt, 0, 0]}>
 		{/* Sun */}
     <Sphere
 			ref={sunRef} 
@@ -150,46 +151,61 @@ const SolarSystem = () => {
 	</group>;
 };
 
+const Camera = (props) => {
+	const cameraRef = useRef();
+
+	const { fov, position } = useControls("Camera", {
+		fov: 35,
+		position: [3.82, 2.03, -2.8],
+	}, { collapsed: true });
+
+	return <PerspectiveCamera makeDefault position={position} fov={fov} ref={cameraRef} />
+}
+
 const App = () => {
-	const postConfig = useControls(
-    "Post",
-    {
-      noise: true,
-      noiseIntensity: 0.2,
-      bloom: true,
-      bloomOpacity: .6,
-      bloomThreshold: -.2,
-      bloomSmoothing: .9,
-    },
-    { collapsed: true }
-  );
+	const postConfig = useControls("Post", {
+		bloom: true,
+		bloomOpacity: .6,
+		bloomThreshold: -.2,
+		bloomSmoothing: .9,
+		noise: true,
+		noiseIntensity: 0.2,
+		vignette: true,
+		vignetteOffset: 0.1,
+		vignetteDarkness: 1.1,
+	}, { collapsed: true });
 
   return (
-    <Canvas	
-			camera={{ position: [0, 2, 5], fov: 35 }}
-			gl={{
-        powerPreference: "high-performance",
-        alpha: false,
-        antialias: !postConfig.bloom && !postConfig.depthOfField && !postConfig.noise,
-        stencil: false,
-        depth: false,
-      }}
-		>
-      {/* <Leva hidden /> */}
-      <OrbitControls />
-      <SolarSystem />
-			<EffectComposer multisampling={0} disableNormalPass={true}>
-        {postConfig.bloom && (
-          <Bloom
-            luminanceThreshold={postConfig.bloomThreshold}
-            luminanceSmoothing={postConfig.bloomSmoothing}
-            height={1024}
-            opacity={postConfig.bloomOpacity}
-          />
-        )}
-        {postConfig.noise && <Noise opacity={postConfig.noiseIntensity} />}
-      </EffectComposer>
-    </Canvas>
+		<>
+			<Leva collapsed />
+			<Canvas	
+				gl={{
+					powerPreference: "high-performance",
+					alpha: false,
+					antialias: !postConfig.bloom && !postConfig.depthOfField && !postConfig.noise,
+					stencil: false,
+					depth: false,
+				}}
+			>
+				<Float floatIntensity={.2} floatingRange={.1} rotationIntensity={.4} speed={.5}>
+					<Camera />
+				</Float>
+				<OrbitControls />
+				<SolarSystem />
+				<EffectComposer multisampling={0} disableNormalPass={true}>
+					{postConfig.bloom && (
+						<Bloom
+							luminanceThreshold={postConfig.bloomThreshold}
+							luminanceSmoothing={postConfig.bloomSmoothing}
+							height={1024}
+							opacity={postConfig.bloomOpacity}
+						/>
+					)}
+					{postConfig.noise && <Noise opacity={postConfig.noiseIntensity} />}
+					{postConfig.vignette && <Vignette eskil={false} offset={postConfig.vignetteOffset} darkness={postConfig.vignetteDarkness} />}
+				</EffectComposer>
+			</Canvas>
+		</>
   );
 };
 
