@@ -119,7 +119,7 @@ const SolarSystem = () => {
 		</Plane> */}
 
 		<Grid 
-			position={[-width * .5, -0.01, 0]} 
+			position={[-width * .5, 0, 0]} 
 			args={gridSize} 
 			{...gridConfig} 
 		/>
