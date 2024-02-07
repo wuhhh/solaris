@@ -107,7 +107,10 @@ const GridMaterial = shaderMaterial(
       #include <tonemapping_fragment>
       #include <colorspace_fragment>
     }
-  `
+  `,
+	(self) => {
+		self.blending = THREE.AdditiveBlending;
+	}
 );
 
 const Grid = React.forwardRef(
