@@ -4,20 +4,24 @@ import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
 import { Float, OrbitControls, PerspectiveCamera, Plane, Ring, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
 import { Grid } from "./Grid";
 import "./OrbitRingMaterial";
 
 const SolarSystem = () => {
+	const camera = useThree((state) => state.camera);
 	const { width } = useThree((state) => state.viewport);
 	const c = { collapsed: true };	
 	const sunRef = useRef();
-	const planetOrder = ["mer", "ven", "ear", "mar", "jup", "sat", "ura", "nep"];
+	const planetsRef = useRef({});
+	const planets = ["mer", "ven", "ear", "mar", "jup", "sat", "ura", "nep"];
 	const [selectedPlanet, setSelectedPlanet] = useState(null);
 
 	// Assign a ref to each planet
-	const assignPlanetRef = (planet) => {
-		return useRef(`planet${planet}`);
-	}
+	const assignPlanetRef = (planet) => (ref) => {
+		planetsRef.current[planet] = ref;
+	};
 
 	// Grid config
 	const { gridSize, ...gridConfig } = useControls("Grid", {
@@ -66,48 +70,40 @@ const SolarSystem = () => {
 			sunScale: 1,
 		}, c),
 		mercury: folder({
-			merPosition: [-1.47, 0, 0],
 			merScale: .008,
 			merColor: "#ccd1bc",
 		}, c),
 		venus: folder({
-			venPosition: [-1.13, 0, 0],
 			venScale: .02,
 			venColor: "#8398aa",
 		}, c),
 		earth: folder({
-			earPosition: [-0.8, 0, 0],
 			earScale: .02,
 			earColor: "#3f6aeb",
 		}, c),
 		mars: folder({
-			marPosition: [-0.46, 0, 0],
 			marScale: .01,
 			marColor: "#db2121",
 		}, c),
 		jupiter: folder({
-			jupPosition: [(-width * .5) + (.6 * 6), 0, 0],
 			jupScale: .1,
 			jupColor: "#ff6900",
 		}, c),
 		saturn: folder({
-			satPosition: [0.85, 0, 0],
 			satScale: .08,
 			satColor: "#8d89e2",
 		}, c),
 		uranus: folder({
-			uraPosition: [1.49, 0, 0],
 			uraScale: .06,
 			uraColor: "#5e7f93",
 		}, c),
 		neptune: folder({
-			nepPosition: [2.1, 0, 0],
 			nepScale: .06,
 			nepColor: "#00ffec",
 		}, c),
 	}, c);
-
-  return <group rotation={[systemData.genTilt, 0, 0]}>
+	
+  return <group rotation={[systemData.genTilt, 0, 0]} position={[-.3, -.2, 0]}>
 		{/* Sun */}
     <Sphere
 			ref={sunRef} 
@@ -122,7 +118,7 @@ const SolarSystem = () => {
 			<meshBasicMaterial color="orange" />
 		</Sphere>
 
-		{planetOrder.map((planet) => {
+		{planets.map((planet) => {
 			return <Sphere
 				ref={assignPlanetRef(planet)}
 				onClick={() => setSelectedPlanet(planet)}
@@ -154,12 +150,17 @@ const SolarSystem = () => {
 const Camera = (props) => {
 	const cameraRef = useRef();
 
-	const { fov, position } = useControls("Camera", {
+	const { fov, position, rotation } = useControls("Camera", {
 		fov: 35,
 		position: [3.82, 2.03, -2.8],
+		rotation: [-2.50, 0.83, 2.66],
 	}, { collapsed: true });
 
-	return <PerspectiveCamera makeDefault position={position} fov={fov} ref={cameraRef} />
+	/* useFrame(() => {
+		console.log(cameraRef.current.position, cameraRef.current.rotation, cameraRef.current.quaternion);
+	}); */
+
+	return <PerspectiveCamera ref={cameraRef} makeDefault fov={fov} position={position} rotation={rotation} />
 }
 
 const App = () => {
@@ -190,7 +191,7 @@ const App = () => {
 				<Float floatIntensity={.2} floatingRange={.1} rotationIntensity={.4} speed={.5}>
 					<Camera />
 				</Float>
-				<OrbitControls />
+				{/* <OrbitControls enabled={false} /> */}
 				<SolarSystem />
 				<EffectComposer multisampling={0} disableNormalPass={true}>
 					{postConfig.bloom && (
