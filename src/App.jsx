@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
-import { Float, OrbitControls, PerspectiveCamera, Plane, Ring, Sphere, Stars } from "@react-three/drei";
+import { Cloud, Clouds, Float, OrbitControls, PerspectiveCamera, Plane, Ring, Sparkles, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
@@ -15,8 +15,7 @@ import "./OrbitRingMaterial";
  */
 
 const SolarSystem = () => {
-  const camera = useThree(state => state.camera);
-  const { width } = useThree(state => state.viewport);
+  const { width, height } = useThree(state => state.viewport);
   const c = { collapsed: true };
   const sunRef = useRef();
   const planetsRef = useRef({});
@@ -153,11 +152,7 @@ const SolarSystem = () => {
     c
   );
 
-	useFrame(({ clock }, delta) => {
-		// const mar = planetsRef.current.mar;
-		// mar.position.x = Math.sin(clock.getElapsedTime() * 0.5) * getPosition("mar")[0];
-		// mar.position.z = Math.cos(clock.getElapsedTime() * 0.5) * getPosition("mar")[0];
-
+	useFrame(({ clock }) => {
 		planets.forEach(p => {
 			const pRef = planetsRef.current[p];
 			const orbitSpeed = systemData[p + "OrbitSpeed"];
@@ -168,7 +163,7 @@ const SolarSystem = () => {
 
   return (
     <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
-      <Float floatIntensity={0.2} floatingRange={0.1} rotationIntensity={0.4} speed={0.5}>
+      <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
         <group>
           {/* Sun */}
           <Sphere
@@ -201,6 +196,8 @@ const SolarSystem = () => {
           {/* <RingTest /> */}
 
           <Grid args={gridSize} {...gridConfig} />
+					
+					<Sparkles count={1000} speed={.5} scale={[width, height, width]} noise={0} />
         </group>
       </Float>
     </group>
@@ -294,6 +291,9 @@ const App = () => {
       >
         <Camera />
         <OrbitControls />
+				<Clouds material={THREE.MeshBasicMaterial} position={[0, -15, -100]}>
+					<Cloud seed={Math.ceil(Math.random() * 9999)} bounds={[75, .5, -10]} segments={200} volume={25} color="white" fade={300000} />
+				</Clouds>
         <SolarSystem />
         <EffectComposer multisampling={0} disableNormalPass={true}>
           {postConfig.bloom && (
