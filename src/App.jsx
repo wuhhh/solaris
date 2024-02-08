@@ -21,7 +21,6 @@ const SolarSystem = () => {
   const sunRef = useRef();
   const planetsRef = useRef({});
   const planets = ["mer", "ven", "ear", "mar", "jup", "sat", "ura", "nep"];
-  const [selectedPlanet, setSelectedPlanet] = useState(null);
 
   // Assign a ref to each planet
   const assignPlanetRef = planet => ref => {
@@ -163,7 +162,6 @@ const SolarSystem = () => {
             return (
               <Sphere
                 ref={assignPlanetRef(planet)}
-                onClick={() => setSelectedPlanet(planet)}
                 key={planet}
                 args={[1, 64, 64]}
                 position={getPosition(planet)}
@@ -216,11 +214,6 @@ const Camera = props => {
 const RingTest = props => {
 	const { width } = useThree(state => state.viewport);
 	const ringRef = useRef();
-	const ringRef1 = useRef();
-	const ringRef2 = useRef();
-	const ringRef3 = useRef();
-	const ringRef4 = useRef();
-	const ringRef5 = useRef();
 
 	// Grid config
   const { radius, gridSize, ...gridConfig } = useControls(
@@ -229,7 +222,7 @@ const RingTest = props => {
 			gridSize: [4.2, 4.2],
       radius: 1.1,
 			lineThickness: { value: 1, min: 0, max: 10, step: 0.1 },
-			lineColor: "#555555",
+			lineColor: "#f2db83",
     },
     { collapsed: true }
   );
