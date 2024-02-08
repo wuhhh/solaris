@@ -52,7 +52,7 @@ const SolarSystem = () => {
   const getPosition = planet => {
     const g1 = gridConfig.cellSize;
     const g2 = gridConfig.sectionSize;
-    const start = -width * 0.5;
+    const start = 0;
 
     if (planet === "sun") return [start, 0, 0];
     if (planet === "mer") return [start + g1 * 4, 0, 0];
@@ -73,7 +73,8 @@ const SolarSystem = () => {
       general: folder(
         {
           genScaleMult: 2.5,
-          genSystemRotation: [0.1, -2.3, 0.1],
+					genSystemPosition: [2.1, -.3, -2],
+          genSystemRotation: [0, -2.3, 0.1],
         },
         c
       ),
@@ -88,6 +89,7 @@ const SolarSystem = () => {
         {
           merScale: 0.008,
           merColor: "#ccd1bc",
+					merOrbitSpeed: 1,
         },
         c
       ),
@@ -95,6 +97,7 @@ const SolarSystem = () => {
         {
           venScale: 0.02,
           venColor: "#8398aa",
+					venOrbitSpeed: 0.8,
         },
         c
       ),
@@ -102,6 +105,7 @@ const SolarSystem = () => {
         {
           earScale: 0.02,
           earColor: "#3f6aeb",
+					earOrbitSpeed: 0.6,
         },
         c
       ),
@@ -109,6 +113,7 @@ const SolarSystem = () => {
         {
           marScale: 0.01,
           marColor: "#db2121",
+					marOrbitSpeed: 0.4,
         },
         c
       ),
@@ -116,6 +121,7 @@ const SolarSystem = () => {
         {
           jupScale: 0.1,
           jupColor: "#ff6900",
+					jupOrbitSpeed: 0.3,
         },
         c
       ),
@@ -123,6 +129,7 @@ const SolarSystem = () => {
         {
           satScale: 0.08,
           satColor: "#8d89e2",
+					satOrbitSpeed: 0.2,
         },
         c
       ),
@@ -130,6 +137,7 @@ const SolarSystem = () => {
         {
           uraScale: 0.06,
           uraColor: "#5e7f93",
+					uraOrbitSpeed: 0.1,
         },
         c
       ),
@@ -137,6 +145,7 @@ const SolarSystem = () => {
         {
           nepScale: 0.06,
           nepColor: "#00ffec",
+					nepOrbitSpeed: 0.05,
         },
         c
       ),
@@ -144,8 +153,21 @@ const SolarSystem = () => {
     c
   );
 
+	useFrame(({ clock }, delta) => {
+		// const mar = planetsRef.current.mar;
+		// mar.position.x = Math.sin(clock.getElapsedTime() * 0.5) * getPosition("mar")[0];
+		// mar.position.z = Math.cos(clock.getElapsedTime() * 0.5) * getPosition("mar")[0];
+
+		planets.forEach(p => {
+			const pRef = planetsRef.current[p];
+			const orbitSpeed = systemData[p + "OrbitSpeed"];
+			pRef.position.x = Math.sin(clock.getElapsedTime() * orbitSpeed) * getPosition(p)[0];
+			pRef.position.z = Math.cos(clock.getElapsedTime() * orbitSpeed) * getPosition(p)[0];
+		})
+	});
+
   return (
-    <group rotation={systemData.genSystemRotation}>
+    <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
       <Float floatIntensity={0.2} floatingRange={0.1} rotationIntensity={0.4} speed={0.5}>
         <group>
           {/* Sun */}
@@ -176,9 +198,9 @@ const SolarSystem = () => {
             );
           })}
 
-          <RingTest />
+          {/* <RingTest /> */}
 
-          <Grid position={[-width * 0.5, 0, 0]} args={gridSize} {...gridConfig} />
+          <Grid args={gridSize} {...gridConfig} />
         </group>
       </Float>
     </group>
@@ -195,7 +217,7 @@ const Camera = props => {
     "Camera",
     {
       fov: 35,
-      position: [0, 2, 5],
+      position: [0, 2, 8],
     },
     { collapsed: true }
   );
@@ -233,7 +255,7 @@ const RingTest = props => {
 	});
 
   return <group>
-		<GridRing ref={ringRef} position={[-width * .5, 0, 0]} args={gridSize} {...gridConfig} radius={1.02} />
+		<GridRing ref={ringRef} args={gridSize} {...gridConfig} radius={1.02} />
 	</group>;
 };
 
