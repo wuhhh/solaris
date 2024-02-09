@@ -1,7 +1,21 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
-import { Cloud, Clouds, Float, OrbitControls, PerspectiveCamera, Plane, Ring, Sparkles, Sphere, Stars } from "@react-three/drei";
+import {
+  Billboard,
+  Circle,
+  Cloud,
+  Clouds,
+  Float,
+  OrbitControls,
+  PerspectiveCamera,
+  Plane,
+  Ring,
+	shaderMaterial,
+  Sparkles,
+  Sphere,
+  Stars,
+} from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
@@ -157,54 +171,62 @@ const SolarSystem = () => {
         },
         c
       ),
-      clouds: folder({
-        cloud1Visible: true,
-        cloud1Seed: 2001,
-        cloud1Bounds: [-200, 0.1, -10],
-        cloud1Segments: {
-          value: 69,
-          min: 1,
-          max: 1000,
-          step: 1,
+      clouds: folder(
+        {
+          cloud1Visible: true,
+          cloud1Seed: 2001,
+          cloud1Bounds: [-200, 0.1, -10],
+          cloud1Segments: {
+            value: 69,
+            min: 1,
+            max: 1000,
+            step: 1,
+          },
+          cloud1Volume: {
+            value: 40,
+            min: 1,
+            max: 100,
+            step: 1,
+          },
+          // cloud1Color: "#c9c9c9",
+          cloud1Color: "#c11313",
+          cloud1Fade: {
+            value: 145000,
+            min: 1,
+            max: 500000,
+            step: 500,
+          },
+          cloud1Position: [0, -15, -100],
+          cloud2Visible: true,
+          cloud2Seed: 1984,
+          cloud2Bounds: [-100, -100, -100],
+          cloud2Segments: {
+            // value: 200,
+            value: 124,
+            min: 1,
+            max: 1000,
+            step: 1,
+          },
+          cloud2Volume: {
+            // value: 66,
+            value: 67,
+            min: 1,
+            max: 100,
+            step: 1,
+          },
+          // cloud2Color: "#585858",
+          cloud2Color: "#6169b1",
+          cloud2Fade: {
+            // value: 36500,
+            value: 30000,
+            min: 1,
+            max: 500000,
+            step: 500,
+          },
+          cloud2Position: [-5, -42, -50],
         },
-        cloud1Volume: {
-          value: 40,
-          min: 1,
-          max: 100,
-          step: 1,
-        },
-        cloud1Color: "#c9c9c9",
-        cloud1Fade: {
-          value: 145000,
-          min: 1,
-          max: 500000,
-          step: 500,
-        },
-        cloud1Position: [0, -15, -100],
-        cloud2Visible: true,
-        cloud2Seed: 1984,
-        cloud2Bounds: [-100, -100, -100],
-        cloud2Segments: {
-          value: 200,
-          min: 1,
-          max: 1000,
-          step: 1,
-        },
-        cloud2Volume: {
-          value: 66,
-          min: 1,
-          max: 100,
-          step: 1,
-        },
-        cloud2Color: "#585858",
-        cloud2Fade: {
-          value: 36500,
-          min: 1,
-          max: 500000,
-          step: 500,
-        },
-        cloud2Position: [-5, -42, -50],
-      }),
+        c
+      ),
     },
     c
   );
@@ -220,10 +242,10 @@ const SolarSystem = () => {
 
   return (
     <>
-			<group position={[0, -2, 0]}>
-				<Sparkles position={[0, 0, -8]} count={8000} speed={0.05} scale={[width * 4, height * 4, .3]} noise={1.5} size={1} opacity={0.5} />
-				<Sparkles position={[0, 0, -8]} count={1000} speed={0.05} scale={[width * 4, height * 4, .3]} noise={0.5} size={2} opacity={1} />
-			</group>
+      <group position={[0, -2, 0]}>
+        <Sparkles position={[0, 0, -8]} count={8000} speed={0.05} scale={[width * 4, height * 4, 0.3]} noise={1.5} size={1} opacity={0.5} />
+        <Sparkles position={[0, 0, -8]} count={1000} speed={0.05} scale={[width * 4, height * 4, 0.3]} noise={0.5} size={2} opacity={1} />
+      </group>
       <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
         <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
           <group>
@@ -234,8 +256,35 @@ const SolarSystem = () => {
               position={getPosition("sun")}
               scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
             >
-              {/* <meshBasicMaterial color='orange' /> */}
-              <meshStandardMaterial />
+              <Billboard>
+                <Circle
+                  args={[1.2, 64]}
+                  position={getPosition("sun")}
+                  scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
+                >
+                  <shaderMaterial
+										vertexShader={`
+											varying vec2 vUv;
+											void main() { 
+												gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); 
+												vUv = uv;
+											}
+										`}
+										fragmentShader={`
+											varying vec2 vUv;
+											void main() { 
+												vec2 vuv = vUv;
+												float strength = clamp(0., 1., smoothstep(.95, 1., distance(vuv, vec2(.5)) * 2.));
+												gl_FragColor = vec4(vec3(strength), 1.);
+
+												#include <color_fragment>
+												#include <tonemapping_fragment>
+											}
+										`}
+									/>
+                </Circle>
+              </Billboard>
+              <meshBasicMaterial color='black' />
             </Sphere>
 
             {planets.map(planet => {
