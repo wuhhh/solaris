@@ -33,13 +33,13 @@ const SolarSystem = () => {
       gridSize: [10.5, 10.5],
       gridType: { value: 2, options: { Grid: 0, Circles: 2 } },
       cellSize: { value: 0.3, min: 0, max: 10, step: 0.1 },
-      cellThickness: { value: 1, min: 0, max: 100, step: 0.1 },
-      cellColor: "#555555",
+      cellThickness: { value: 0.6, min: 0, max: 100, step: 0.1 },
+      cellColor: "#232934",
       sectionSize: { value: 0.6, min: 0, max: 10, step: 0.1 },
       sectionThickness: { value: 0, min: 0, max: 100, step: 0.1 },
       sectionColor: "#9d4b4b",
-      circleGridMaxRadius: { value: 50, min: 1, max: 100, step: 1 },
-      fadeDistance: { value: 20, min: 0, max: 100, step: 1 },
+      circleGridMaxRadius: { value: 60, min: 1, max: 100, step: 1 },
+      fadeDistance: { value: 30, min: 0, max: 100, step: 1 },
       fadeStrength: { value: 1, min: 0, max: 1, step: 0.1 },
       followCamera: false,
       infiniteGrid: true,
@@ -71,9 +71,18 @@ const SolarSystem = () => {
     {
       general: folder(
         {
-          genScaleMult: 2.5,
-					genSystemPosition: [2.1, -.3, -2],
+          genScaleMult: 4,
+          genSystemPosition: [2.1, -0.3, -2],
           genSystemRotation: [0, -2.3, 0.1],
+          genDirLightEnabled: false,
+          genDirLightIntensity: 1,
+          genDirLightPosition: [0, 2, 8],
+          genDirLightColor: "#ffffff",
+          genAmbientLightEnabled: false,
+          genAmbientLightIntensity: 0.01,
+          genPointLightEnabled: true,
+          genPointLightIntensity: 12,
+          genPointLightColor: "#c8d2ff",
         },
         c
       ),
@@ -88,7 +97,7 @@ const SolarSystem = () => {
         {
           merScale: 0.008,
           merColor: "#ccd1bc",
-					merOrbitSpeed: 1,
+          merOrbitSpeed: 1,
         },
         c
       ),
@@ -96,7 +105,7 @@ const SolarSystem = () => {
         {
           venScale: 0.02,
           venColor: "#8398aa",
-					venOrbitSpeed: 0.8,
+          venOrbitSpeed: 0.8,
         },
         c
       ),
@@ -104,7 +113,7 @@ const SolarSystem = () => {
         {
           earScale: 0.02,
           earColor: "#3f6aeb",
-					earOrbitSpeed: 0.6,
+          earOrbitSpeed: 0.6,
         },
         c
       ),
@@ -112,7 +121,7 @@ const SolarSystem = () => {
         {
           marScale: 0.01,
           marColor: "#db2121",
-					marOrbitSpeed: 0.4,
+          marOrbitSpeed: 0.4,
         },
         c
       ),
@@ -120,7 +129,7 @@ const SolarSystem = () => {
         {
           jupScale: 0.1,
           jupColor: "#ff6900",
-					jupOrbitSpeed: 0.3,
+          jupOrbitSpeed: 0.3,
         },
         c
       ),
@@ -128,7 +137,7 @@ const SolarSystem = () => {
         {
           satScale: 0.08,
           satColor: "#8d89e2",
-					satOrbitSpeed: 0.2,
+          satOrbitSpeed: 0.2,
         },
         c
       ),
@@ -136,7 +145,7 @@ const SolarSystem = () => {
         {
           uraScale: 0.06,
           uraColor: "#5e7f93",
-					uraOrbitSpeed: 0.1,
+          uraOrbitSpeed: 0.1,
         },
         c
       ),
@@ -144,63 +153,154 @@ const SolarSystem = () => {
         {
           nepScale: 0.06,
           nepColor: "#00ffec",
-					nepOrbitSpeed: 0.05,
+          nepOrbitSpeed: 0.05,
         },
         c
       ),
+      clouds: folder({
+        cloud1Visible: true,
+        cloud1Seed: 2001,
+        cloud1Bounds: [-200, 0.1, -10],
+        cloud1Segments: {
+          value: 69,
+          min: 1,
+          max: 1000,
+          step: 1,
+        },
+        cloud1Volume: {
+          value: 40,
+          min: 1,
+          max: 100,
+          step: 1,
+        },
+        cloud1Color: "#c9c9c9",
+        cloud1Fade: {
+          value: 145000,
+          min: 1,
+          max: 500000,
+          step: 500,
+        },
+        cloud1Position: [0, -15, -100],
+        cloud2Visible: true,
+        cloud2Seed: 1984,
+        cloud2Bounds: [-100, -100, -100],
+        cloud2Segments: {
+          value: 200,
+          min: 1,
+          max: 1000,
+          step: 1,
+        },
+        cloud2Volume: {
+          value: 66,
+          min: 1,
+          max: 100,
+          step: 1,
+        },
+        cloud2Color: "#585858",
+        cloud2Fade: {
+          value: 36500,
+          min: 1,
+          max: 500000,
+          step: 500,
+        },
+        cloud2Position: [-5, -42, -50],
+      }),
     },
     c
   );
 
-	useFrame(({ clock }) => {
-		planets.forEach(p => {
-			const pRef = planetsRef.current[p];
-			const orbitSpeed = systemData[p + "OrbitSpeed"];
-			pRef.position.x = Math.sin(clock.getElapsedTime() * orbitSpeed) * getPosition(p)[0];
-			pRef.position.z = Math.cos(clock.getElapsedTime() * orbitSpeed) * getPosition(p)[0];
-		})
-	});
+  useFrame(({ clock }) => {
+    planets.forEach(p => {
+      const pRef = planetsRef.current[p];
+      const orbitSpeed = systemData[p + "OrbitSpeed"];
+      pRef.position.x = Math.sin(clock.getElapsedTime() * orbitSpeed) * getPosition(p)[0];
+      pRef.position.z = Math.cos(clock.getElapsedTime() * orbitSpeed) * getPosition(p)[0];
+    });
+  });
 
   return (
-    <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
-      <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
-        <group>
-          {/* Sun */}
-          <Sphere
-            ref={sunRef}
-            args={[1, 64, 64]}
-            position={getPosition("sun")}
-            scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
-          >
-            <meshBasicMaterial color='orange' />
-          </Sphere>
+    <>
+			<group position={[0, -2, 0]}>
+				<Sparkles position={[0, 0, -8]} count={8000} speed={0.05} scale={[width * 4, height * 4, .3]} noise={1.5} size={1} opacity={0.5} />
+				<Sparkles position={[0, 0, -8]} count={1000} speed={0.05} scale={[width * 4, height * 4, .3]} noise={0.5} size={2} opacity={1} />
+			</group>
+      <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
+        <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
+          <group>
+            {/* Sun */}
+            <Sphere
+              ref={sunRef}
+              args={[1, 64, 64]}
+              position={getPosition("sun")}
+              scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
+            >
+              {/* <meshBasicMaterial color='orange' /> */}
+              <meshStandardMaterial />
+            </Sphere>
 
-          {planets.map(planet => {
-            return (
-              <Sphere
-                ref={assignPlanetRef(planet)}
-                key={planet}
-                args={[1, 64, 64]}
-                position={getPosition(planet)}
-                scale={[
-                  systemData[planet + "Scale"] * systemData.genScaleMult,
-                  systemData[planet + "Scale"] * systemData.genScaleMult,
-                  systemData[planet + "Scale"] * systemData.genScaleMult,
-                ]}
-              >
-                <meshBasicMaterial color={systemData[planet + "Color"]} />
-              </Sphere>
-            );
-          })}
+            {planets.map(planet => {
+              return (
+                <Sphere
+                  ref={assignPlanetRef(planet)}
+                  key={planet}
+                  args={[1, 64, 64]}
+                  position={getPosition(planet)}
+                  scale={[
+                    systemData[planet + "Scale"] * systemData.genScaleMult,
+                    systemData[planet + "Scale"] * systemData.genScaleMult,
+                    systemData[planet + "Scale"] * systemData.genScaleMult,
+                  ]}
+                >
+                  {/* <meshBasicMaterial color={systemData[planet + "Color"]} /> */}
+                  <meshStandardMaterial color={systemData[planet + "Color"]} />
+                </Sphere>
+              );
+            })}
 
-          {/* <RingTest /> */}
+            {/* <RingTest /> */}
+            {systemData.genAmbientLightEnabled && <ambientLight intensity={systemData.genAmbientLightIntensity} />}
+            {systemData.genDirLightEnabled && (
+              <directionalLight intensity={systemData.genDirLightIntensity} position={systemData.genDirLightPosition} />
+            )}
+            {systemData.genPointLightEnabled && (
+              <pointLight
+                position={[0, 0, 0]}
+                intensity={systemData.genPointLightIntensity}
+                color={systemData.genPointLightColor}
+                distance={100}
+                decay={2}
+              />
+            )}
 
-          <Grid args={gridSize} {...gridConfig} />
-					
-					<Sparkles count={1000} speed={.5} scale={[width, height, width]} noise={0} />
-        </group>
-      </Float>
-    </group>
+            <Grid renderOrder={1} args={gridSize} {...gridConfig} />
+          </group>
+        </Float>
+      </group>
+      <Clouds material={THREE.MeshBasicMaterial}>
+        {systemData.cloud1Visible && (
+          <Cloud
+            seed={systemData.cloud1Seed}
+            bounds={systemData.cloud1Bounds}
+            segments={systemData.cloud1Segments}
+            volume={systemData.cloud1Volume}
+            color={systemData.cloud1Color}
+            fade={systemData.cloud1Fade}
+            position={systemData.cloud1Position}
+          />
+        )}
+        {systemData.cloud2Visible && (
+          <Cloud
+            seed={systemData.cloud2Seed}
+            bounds={systemData.cloud2Bounds}
+            segments={systemData.cloud2Segments}
+            volume={systemData.cloud2Volume}
+            color={systemData.cloud2Color}
+            fade={systemData.cloud2Fade}
+            position={systemData.cloud2Position}
+          />
+        )}
+      </Clouds>
+    </>
   );
 };
 
@@ -227,33 +327,35 @@ const Camera = props => {
 };
 
 /**
- * Ring 
+ * Ring
  */
 
 const RingTest = props => {
-	const { width } = useThree(state => state.viewport);
-	const ringRef = useRef();
+  const { width } = useThree(state => state.viewport);
+  const ringRef = useRef();
 
-	// Grid config
+  // Grid config
   const { radius, gridSize, ...gridConfig } = useControls(
     "Ring",
     {
-			gridSize: [4.2, 4.2],
+      gridSize: [4.2, 4.2],
       radius: 1.1,
-			lineThickness: { value: 1, min: 0, max: 10, step: 0.1 },
-			lineColor: "#f2db83",
+      lineThickness: { value: 1, min: 0, max: 10, step: 0.1 },
+      lineColor: "#f2db83",
     },
     { collapsed: true }
   );
 
-	useFrame((_, delta) => {
-		ringRef.current.rotation.x += delta * 2.5;
-		ringRef.current.rotation.z += delta * .5;
-	});
+  useFrame((_, delta) => {
+    ringRef.current.rotation.x += delta * 2.5;
+    ringRef.current.rotation.z += delta * 0.5;
+  });
 
-  return <group>
-		<GridRing ref={ringRef} args={gridSize} {...gridConfig} radius={1.02} />
-	</group>;
+  return (
+    <group>
+      <GridRing ref={ringRef} args={gridSize} {...gridConfig} radius={1.02} />
+    </group>
+  );
 };
 
 /**
@@ -264,15 +366,15 @@ const App = () => {
   const postConfig = useControls(
     "Post",
     {
-      bloom: true,
+      bloom: false,
       bloomOpacity: 0.6,
       bloomThreshold: -0.2,
       bloomSmoothing: 0.9,
       noise: true,
       noiseIntensity: 0.2,
       vignette: true,
-      vignetteOffset: 0.1,
-      vignetteDarkness: 1.1,
+      vignetteOffset: 0.3,
+      vignetteDarkness: 1.3,
     },
     { collapsed: true }
   );
@@ -291,9 +393,6 @@ const App = () => {
       >
         <Camera />
         <OrbitControls />
-				<Clouds material={THREE.MeshBasicMaterial} position={[0, -15, -100]}>
-					<Cloud seed={Math.ceil(Math.random() * 9999)} bounds={[75, .5, -10]} segments={200} volume={25} color="white" fade={300000} />
-				</Clouds>
         <SolarSystem />
         <EffectComposer multisampling={0} disableNormalPass={true}>
           {postConfig.bloom && (
