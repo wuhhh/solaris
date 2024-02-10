@@ -30,6 +30,7 @@ import "./OrbitRingMaterial";
 
 const SolarSystem = () => {
   const { width, height } = useThree(state => state.viewport);
+	const randomStart = Math.random() * 1000;
   const c = { collapsed: true };
   const sunRef = useRef();
   const planetsRef = useRef({});
@@ -235,17 +236,14 @@ const SolarSystem = () => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
       const orbitSpeed = systemData[p + "OrbitSpeed"];
-      pRef.position.x = Math.sin(clock.getElapsedTime() * orbitSpeed) * getPosition(p)[0];
-      pRef.position.z = Math.cos(clock.getElapsedTime() * orbitSpeed) * getPosition(p)[0];
+      pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
     });
   });
 
   return (
     <>
-      <group position={[0, -2, 0]}>
-				<Stars radius={500} depth={50} count={20000} factor={4} saturation={100} speed={0} />
-				<Stars radius={75} depth={20} count={2500} factor={4} saturation={100} speed={0} />
-      </group>
+			<Stars radius={5} depth={50} count={20000} factor={4} saturation={1} speed={0} fade />
       <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
         <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
           <group>
