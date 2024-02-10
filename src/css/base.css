@@ -1,0 +1,20 @@
+html,
+body,
+#root {
+  @apply w-full h-full select-none overflow-hidden;
+  background-color: #160b26;
+  -webkit-touch-callout: none;
+}
+
+#root {
+  overflow: auto;
+}
+
+body {
+  @apply fixed font-mono overflow-hidden overscroll-y-none antialiased;
+}
+
+.logomark {
+  @apply absolute bottom-[26px] left-[26px] w-[26px] h-[26px];
+}
+

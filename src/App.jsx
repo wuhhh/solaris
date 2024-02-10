@@ -1,28 +1,16 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { Canvas, extend, useFrame, useThree } from "@react-three/fiber";
-import {
-  Billboard,
-  Circle,
-  Cloud,
-  Clouds,
-  Float,
-  OrbitControls,
-  PerspectiveCamera,
-  Plane,
-  Ring,
-	shaderMaterial,
-  Sparkles,
-  Sphere,
-  Stars,
-} from "@react-three/drei";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { Billboard, Circle, Cloud, Clouds, Float, OrbitControls, PerspectiveCamera, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
-import { Bloom, DepthOfField, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Grid } from "./Grid";
 import { GridRing } from "./GridRing";
+import UI from "./UI";
 import "./OrbitRingMaterial";
+import useStore from "./stores/useStore";
 
 /**
  * Solar System
@@ -30,7 +18,7 @@ import "./OrbitRingMaterial";
 
 const SolarSystem = () => {
   const { width, height } = useThree(state => state.viewport);
-	const randomStart = Math.random() * 1000;
+  const randomStart = Math.random() * 1000;
   const c = { collapsed: true };
   const sunRef = useRef();
   const planetsRef = useRef({});
@@ -51,7 +39,7 @@ const SolarSystem = () => {
       cellThickness: { value: 3.2, min: 0, max: 100, step: 0.1 },
       cellColor: "#1e3d76",
       sectionSize: { value: 1.2, min: 0, max: 10, step: 0.1 },
-      sectionThickness: { value: 3., min: 0, max: 100, step: 0.1 },
+      sectionThickness: { value: 3, min: 0, max: 100, step: 0.1 },
       sectionColor: "#ff8686",
       circleGridMaxRadius: { value: 19, min: 1, max: 100, step: 1 },
       fadeDistance: { value: 21, min: 0, max: 100, step: 1 },
@@ -94,7 +82,7 @@ const SolarSystem = () => {
           genDirLightPosition: [0, 2, 8],
           genDirLightColor: "#ffffff",
           genAmbientLightEnabled: true,
-          genAmbientLightIntensity: 8.,
+          genAmbientLightIntensity: 8,
           genPointLightEnabled: true,
           genPointLightIntensity: 60,
           genPointLightColor: "#08c7ff",
@@ -243,7 +231,7 @@ const SolarSystem = () => {
 
   return (
     <>
-			<Stars radius={5} depth={50} count={20000} factor={4} saturation={1} speed={0} fade />
+      <Stars radius={5} depth={50} count={20000} factor={4} saturation={1} speed={0} fade />
       <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
         <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
           <group>
@@ -260,7 +248,7 @@ const SolarSystem = () => {
                   position={getPosition("sun")}
                   scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
                 >
-									<meshStandardMaterial color="#ff8686" />
+                  <meshStandardMaterial color='#ff8686' />
                 </Circle>
               </Billboard>
               <meshBasicMaterial color='black' />
@@ -335,6 +323,7 @@ const SolarSystem = () => {
  */
 
 const Camera = props => {
+  const { preset } = useStore();
   const cameraRef = useRef();
   const { fov, position } = useControls(
     "Camera",
@@ -349,6 +338,23 @@ const Camera = props => {
   useEffect(() => {
     cameraRef.current.lookAt(0, 0, 0);
   }, []);
+
+  useGSAP(() => {
+    gsap.to(cameraRef.current.position, {
+      duration: 5,
+      x: 0,
+      y: 2,
+      z: 8,
+      ease: "power1.inOut",
+      delay: 1,
+      onUpdate: () => {
+        cameraRef.current.lookAt(0, 0, 0);
+      },
+      // onComplete: () => {
+      //   cameraRef.current.lookAt(0, 0, 0);
+      // },
+    });
+  });
 
   return <PerspectiveCamera ref={cameraRef} makeDefault fov={fov} position={position} />;
 };
@@ -394,8 +400,8 @@ const App = () => {
     "Post",
     {
       bloom: true,
-			bloomMipmapBlur: true,
-			bloomIntensity: 1.,
+      bloomMipmapBlur: true,
+      bloomIntensity: 1,
       bloomOpacity: 1.1,
       bloomThreshold: -0.4,
       bloomSmoothing: 1.4,
@@ -421,13 +427,13 @@ const App = () => {
         }}
       >
         <Camera />
-        <OrbitControls />
+        {/* <OrbitControls /> */}
         <SolarSystem />
         <EffectComposer multisampling={0} disableNormalPass={true}>
           {postConfig.bloom && (
             <Bloom
-							mipmapBlur={postConfig.bloomMipmapBlur}
-							intensity={postConfig.bloomIntensity}
+              mipmapBlur={postConfig.bloomMipmapBlur}
+              intensity={postConfig.bloomIntensity}
               luminanceThreshold={postConfig.bloomThreshold}
               luminanceSmoothing={postConfig.bloomSmoothing}
               height={1024}
@@ -438,6 +444,7 @@ const App = () => {
           {postConfig.vignette && <Vignette eskil={false} offset={postConfig.vignetteOffset} darkness={postConfig.vignetteDarkness} />}
         </EffectComposer>
       </Canvas>
+      <UI />
     </>
   );
 };

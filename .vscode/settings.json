@@ -1,0 +1,15 @@
+{
+	"files.associations": {
+		"*.pcss": "tailwindcss",
+		"*.css": "tailwindcss",
+	},
+	"css.validate": false,
+	"editor.formatOnSave": true,
+	// do not format .twig or .php on save
+	"[php]": {
+		"editor.formatOnSave": false
+	},
+	"[twig]": {
+		"editor.formatOnSave": false
+	},
+}
