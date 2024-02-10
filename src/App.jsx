@@ -47,13 +47,13 @@ const SolarSystem = () => {
       gridSize: [10.5, 10.5],
       gridType: { value: 2, options: { Grid: 0, Circles: 2 } },
       cellSize: { value: 0.3, min: 0, max: 10, step: 0.1 },
-      cellThickness: { value: 0.6, min: 0, max: 100, step: 0.1 },
-      cellColor: "#232934",
-      sectionSize: { value: 0.6, min: 0, max: 10, step: 0.1 },
-      sectionThickness: { value: 0, min: 0, max: 100, step: 0.1 },
-      sectionColor: "#9d4b4b",
-      circleGridMaxRadius: { value: 60, min: 1, max: 100, step: 1 },
-      fadeDistance: { value: 30, min: 0, max: 100, step: 1 },
+      cellThickness: { value: 3.2, min: 0, max: 100, step: 0.1 },
+      cellColor: "#1e3d76",
+      sectionSize: { value: 1.2, min: 0, max: 10, step: 0.1 },
+      sectionThickness: { value: 3., min: 0, max: 100, step: 0.1 },
+      sectionColor: "#ff8686",
+      circleGridMaxRadius: { value: 19, min: 1, max: 100, step: 1 },
+      fadeDistance: { value: 21, min: 0, max: 100, step: 1 },
       fadeStrength: { value: 1, min: 0, max: 1, step: 0.1 },
       followCamera: false,
       infiniteGrid: true,
@@ -92,11 +92,11 @@ const SolarSystem = () => {
           genDirLightIntensity: 1,
           genDirLightPosition: [0, 2, 8],
           genDirLightColor: "#ffffff",
-          genAmbientLightEnabled: false,
-          genAmbientLightIntensity: 0.01,
+          genAmbientLightEnabled: true,
+          genAmbientLightIntensity: 8.,
           genPointLightEnabled: true,
-          genPointLightIntensity: 12,
-          genPointLightColor: "#c8d2ff",
+          genPointLightIntensity: 60,
+          genPointLightColor: "#08c7ff",
         },
         c
       ),
@@ -245,8 +245,6 @@ const SolarSystem = () => {
       <group position={[0, -2, 0]}>
 				<Stars radius={500} depth={50} count={20000} factor={4} saturation={100} speed={0} />
 				<Stars radius={75} depth={20} count={2500} factor={4} saturation={100} speed={0} />
-        {/* <Sparkles position={[0, 0, -8]} count={8000} speed={0.05} scale={[width * 4, height * 4, 0.3]} noise={1.5} size={1} opacity={0.5} />
-        <Sparkles position={[0, 0, -8]} count={1000} speed={0.05} scale={[width * 4, height * 4, 0.3]} noise={0.5} size={2} opacity={1} /> */}
       </group>
       <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
         <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
@@ -260,30 +258,11 @@ const SolarSystem = () => {
             >
               <Billboard>
                 <Circle
-                  args={[1.2, 64]}
+                  args={[1.05, 128]}
                   position={getPosition("sun")}
                   scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
                 >
-                  <shaderMaterial
-										vertexShader={`
-											varying vec2 vUv;
-											void main() { 
-												gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); 
-												vUv = uv;
-											}
-										`}
-										fragmentShader={`
-											varying vec2 vUv;
-											void main() { 
-												vec2 vuv = vUv;
-												float strength = clamp(0., 1., smoothstep(.95, 1., distance(vuv, vec2(.5)) * 2.));
-												gl_FragColor = vec4(vec3(strength), 1.);
-
-												#include <color_fragment>
-												#include <tonemapping_fragment>
-											}
-										`}
-									/>
+									<meshStandardMaterial color="#ff8686" />
                 </Circle>
               </Billboard>
               <meshBasicMaterial color='black' />
@@ -302,13 +281,11 @@ const SolarSystem = () => {
                     systemData[planet + "Scale"] * systemData.genScaleMult,
                   ]}
                 >
-                  {/* <meshBasicMaterial color={systemData[planet + "Color"]} /> */}
                   <meshStandardMaterial color={systemData[planet + "Color"]} />
                 </Sphere>
               );
             })}
 
-            {/* <RingTest /> */}
             {systemData.genAmbientLightEnabled && <ambientLight intensity={systemData.genAmbientLightIntensity} />}
             {systemData.genDirLightEnabled && (
               <directionalLight intensity={systemData.genDirLightIntensity} position={systemData.genDirLightPosition} />
@@ -418,11 +395,13 @@ const App = () => {
     "Post",
     {
       bloom: true,
-      bloomOpacity: 0.6,
-      bloomThreshold: -0.2,
-      bloomSmoothing: 0.9,
+			bloomMipmapBlur: true,
+			bloomIntensity: 1.,
+      bloomOpacity: 1.1,
+      bloomThreshold: -0.4,
+      bloomSmoothing: 1.4,
       noise: true,
-      noiseIntensity: 0.2,
+      noiseIntensity: 0.05,
       vignette: true,
       vignetteOffset: 0.3,
       vignetteDarkness: 1.3,
@@ -448,7 +427,8 @@ const App = () => {
         <EffectComposer multisampling={0} disableNormalPass={true}>
           {postConfig.bloom && (
             <Bloom
-							mipmapBlur={true}
+							mipmapBlur={postConfig.bloomMipmapBlur}
+							intensity={postConfig.bloomIntensity}
               luminanceThreshold={postConfig.bloomThreshold}
               luminanceSmoothing={postConfig.bloomSmoothing}
               height={1024}
