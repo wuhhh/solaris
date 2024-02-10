@@ -243,8 +243,10 @@ const SolarSystem = () => {
   return (
     <>
       <group position={[0, -2, 0]}>
-        <Sparkles position={[0, 0, -8]} count={8000} speed={0.05} scale={[width * 4, height * 4, 0.3]} noise={1.5} size={1} opacity={0.5} />
-        <Sparkles position={[0, 0, -8]} count={1000} speed={0.05} scale={[width * 4, height * 4, 0.3]} noise={0.5} size={2} opacity={1} />
+				<Stars radius={500} depth={50} count={20000} factor={4} saturation={100} speed={0} />
+				<Stars radius={75} depth={20} count={2500} factor={4} saturation={100} speed={0} />
+        {/* <Sparkles position={[0, 0, -8]} count={8000} speed={0.05} scale={[width * 4, height * 4, 0.3]} noise={1.5} size={1} opacity={0.5} />
+        <Sparkles position={[0, 0, -8]} count={1000} speed={0.05} scale={[width * 4, height * 4, 0.3]} noise={0.5} size={2} opacity={1} /> */}
       </group>
       <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
         <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
@@ -415,7 +417,7 @@ const App = () => {
   const postConfig = useControls(
     "Post",
     {
-      bloom: false,
+      bloom: true,
       bloomOpacity: 0.6,
       bloomThreshold: -0.2,
       bloomSmoothing: 0.9,
@@ -446,6 +448,7 @@ const App = () => {
         <EffectComposer multisampling={0} disableNormalPass={true}>
           {postConfig.bloom && (
             <Bloom
+							mipmapBlur={true}
               luminanceThreshold={postConfig.bloomThreshold}
               luminanceSmoothing={postConfig.bloomSmoothing}
               height={1024}
