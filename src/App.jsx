@@ -340,7 +340,8 @@ const Camera = props => {
     "Camera",
     {
       fov: 35,
-      position: [0, 2, 8],
+      // position: [0, 2, 8], // OG
+      position: [0, 2, 36], // From afar
     },
     { collapsed: true }
   );
