@@ -1,9 +1,13 @@
 import { create } from "zustand";
-import { subscribeWithSelector } from "zustand/middleware";
+// import { subscribeWithSelector } from "zustand/middleware";
 
 const useStore = create(set => ({
   preset: "default",
   setPreset: preset => set({ preset }),
+  presetIsTransitioning: false,
+  setPresetIsTransitioning: presetIsTransitioning => set({ presetIsTransitioning }),
+  solarSystemRef: null,
+  setSolarSystemRef: solarSystemRef => set({ solarSystemRef }),
 }));
 
 export default useStore;

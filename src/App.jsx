@@ -6,8 +6,8 @@ import { folder, Leva, useControls } from "leva";
 import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
-import { Grid } from "./Grid";
 import { GridRing } from "./GridRing";
+// import { Grid } from "./Grid";
 // import { MyCustomEffect } from "./CustomEffect";
 import UI from "./UI";
 import "./OrbitRingMaterial";
@@ -18,7 +18,8 @@ import useStore from "./stores/useStore";
  */
 
 const SolarSystem = () => {
-  const { width, height } = useThree(state => state.viewport);
+  const setSolarSystemRef = useStore(state => state.setSolarSystemRef);
+  const { width } = useThree(state => state.viewport);
   const randomStart = Math.random() * 1000;
   const c = { collapsed: true };
   const sunRef = useRef();
@@ -57,14 +58,14 @@ const SolarSystem = () => {
     const start = 0;
 
     if (planet === "sun") return [start, 0, 0];
-    if (planet === "mer") return [start + g1 * 4, 0, 0];
-    if (planet === "ven") return [start + g1 * 5, 0, 0];
-    if (planet === "ear") return [start + g1 * 6, 0, 0];
-    if (planet === "mar") return [start + g1 * 7, 0, 0];
-    if (planet === "jup") return [start + g1 * 10, 0, 0];
-    if (planet === "sat") return [start + g1 * 13, 0, 0];
-    if (planet === "ura") return [start + g1 * 15, 0, 0];
-    if (planet === "nep") return [start + g1 * 17, 0, 0];
+    if (planet === "mer") return [start + g1 * 5, 0, 0];
+    if (planet === "ven") return [start + g1 * 6, 0, 0];
+    if (planet === "ear") return [start + g1 * 7, 0, 0];
+    if (planet === "mar") return [start + g1 * 8, 0, 0];
+    if (planet === "jup") return [start + g1 * 11, 0, 0];
+    if (planet === "sat") return [start + g1 * 14, 0, 0];
+    if (planet === "ura") return [start + g1 * 16, 0, 0];
+    if (planet === "nep") return [start + g1 * 18, 0, 0];
 
     return [0, 0, 0];
   };
@@ -75,8 +76,8 @@ const SolarSystem = () => {
       general: folder(
         {
           genScaleMult: 4,
-          genSystemPosition: [2.1, -0.3, -2],
-          genSystemRotation: [0, -2.3, 0.1],
+          genSystemPosition: [0, 0, 0],
+          genSystemRotation: [0, -4.6, 0],
           genDirLightEnabled: false,
           genDirLightIntensity: 1,
           genDirLightPosition: [0, 2, 8],
@@ -232,7 +233,7 @@ const SolarSystem = () => {
   return (
     <>
       <Stars radius={5} depth={50} count={20000} factor={4} saturation={1} speed={0} fade />
-      <group position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
+      <group ref={setSolarSystemRef} position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
         <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
           <group>
             {/* Sun */}
@@ -286,13 +287,17 @@ const SolarSystem = () => {
               />
             )}
 
-            <Grid renderOrder={1} args={gridSize} {...gridConfig} />
-            {/* <GridRing position={getPosition("sun")} args={[10.2, 10.2]} radius={1.1} lineThickness={4} lineColor={0xff8686} /> */}
+            {/* <Grid renderOrder={1} args={gridSize} {...gridConfig} /> */}
+            <GridRing
+              position={getPosition("sun")}
+              args={[11.2, 11.2]}
+              radius={1.1}
+              lineThickness={4}
+              lineColor={gridConfig.sectionColor}
+            />
           </group>
         </Float>
       </group>
-
-      {/* <RingTest /> */}
 
       <Clouds material={THREE.MeshBasicMaterial}>
         {systemData.cloud1Visible && (
@@ -323,73 +328,117 @@ const SolarSystem = () => {
 };
 
 /**
- * Camera
+ * Views
  */
 
-const Camera = props => {
-  const { preset } = useStore();
-  const cameraRef = useRef();
-  const { fov, position } = useControls(
-    "Camera",
-    {
-      fov: 35,
-      // position: [0, 2, 8], // OG
-      position: [0, 2, 36], // From afar
-    },
-    { collapsed: true }
-  );
-
-  useEffect(() => {
-    cameraRef.current.lookAt(0, 0, 0);
-  }, []);
+const Views = () => {
+  const { preset, setPresetIsTransitioning, solarSystemRef } = useStore();
+  const { camera } = useThree();
+  const onStart = () => setPresetIsTransitioning(true);
+  const onComplete = () => setPresetIsTransitioning(false);
 
   useGSAP(() => {
-    gsap.to(cameraRef.current.position, {
-      duration: 5,
-      x: 0,
-      y: 2,
-      z: 8,
-      ease: "power1.inOut",
-      delay: 1,
-      onUpdate: () => {
-        cameraRef.current.lookAt(0, 0, 0);
-      },
-    });
-  });
+    if (solarSystemRef === null) return;
 
-  return <PerspectiveCamera ref={cameraRef} makeDefault fov={fov} position={position} />;
-};
+    // View : Default
 
-/**
- * Ring
- */
+    if (preset === "default") {
+      gsap.to(camera.position, {
+        duration: 5,
+        x: 0,
+        y: 8,
+        z: 36,
+        ease: "power1.inOut",
+        onStart,
+        onComplete,
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+        },
+      });
 
-const RingTest = props => {
-  const { width } = useThree(state => state.viewport);
-  const ringRef = useRef();
+      gsap.to(solarSystemRef.rotation, {
+        duration: 5,
+        x: 0,
+        y: -4.6,
+        z: 0,
+        ease: "power1.inOut",
+      });
 
-  // Grid config
-  const { radius, gridSize, ...gridConfig } = useControls(
-    "Ring",
-    {
-      gridSize: [4.2, 4.2],
-      radius: 1.1,
-      lineThickness: { value: 1, min: 0, max: 10, step: 0.1 },
-      lineColor: "#f2db83",
-    },
-    { collapsed: true }
-  );
+      gsap.to(solarSystemRef.position, {
+        duration: 5,
+        x: 0,
+        y: 0,
+        z: 0,
+        ease: "power1.inOut",
+      });
+    }
 
-  useFrame((_, delta) => {
-    ringRef.current.rotation.x += delta * 2.5;
-    ringRef.current.rotation.z += delta * 0.5;
-  });
+    // View : Near
 
-  return (
-    <group>
-      <GridRing ref={ringRef} args={gridSize} {...gridConfig} radius={1.02} />
-    </group>
-  );
+    if (preset === "near") {
+      gsap.to(camera.position, {
+        duration: 5,
+        x: 0,
+        y: 2,
+        z: 8,
+        ease: "power1.inOut",
+        onStart,
+        onComplete,
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+        },
+      });
+
+      gsap.to(solarSystemRef.rotation, {
+        duration: 5,
+        x: 0,
+        y: -2.3,
+        z: 0.1,
+        ease: "power1.inOut",
+      });
+
+      gsap.to(solarSystemRef.position, {
+        duration: 5,
+        x: 2.1,
+        y: -0.3,
+        z: -2,
+        ease: "power1.inOut",
+      });
+    }
+
+    // View : Top
+
+    if (preset === "top") {
+      gsap.to(camera.position, {
+        duration: 5,
+        x: 0,
+        y: 23,
+        z: 0,
+        ease: "power1.inOut",
+        onStart,
+        onComplete,
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+        },
+      });
+
+      gsap.to(solarSystemRef.rotation, {
+        duration: 5,
+        x: 0,
+        y: 0,
+        z: 0,
+        ease: "power1.inOut",
+      });
+
+      gsap.to(solarSystemRef.position, {
+        duration: 5,
+        x: 0,
+        y: 0,
+        z: 0,
+        ease: "power1.inOut",
+      });
+    }
+  }, [preset]);
 };
 
 const Effects = () => {
@@ -410,9 +459,9 @@ const Effects = () => {
       glitchStrength: [0.3, 1.0],
       glitchRatio: 0.85,
       noise: true,
-      noiseIntensity: 0.05,
+      noiseIntensity: 0.12,
       vignette: true,
-      vignetteOffset: 0.3,
+      vignetteOffset: 0,
       vignetteDarkness: 1.3,
     },
     { collapsed: true }
@@ -437,6 +486,22 @@ const Effects = () => {
 };
 
 /**
+ * OrbitControls
+ */
+
+const WrappedOrbitControls = () => {
+  const orbitControlsRef = useRef();
+  const presetIsTransitioning = useStore(state => state.presetIsTransitioning);
+
+  useEffect(() => {
+    if (orbitControlsRef.current === undefined) return;
+    orbitControlsRef.current.enable = !presetIsTransitioning;
+  }, [presetIsTransitioning]);
+
+  return <OrbitControls ref={orbitControlsRef} enablePan={false} />;
+};
+
+/**
  * App
  */
 
@@ -445,6 +510,7 @@ const App = () => {
     <>
       <Leva collapsed />
       <Canvas
+        camera={{ fov: 35, position: [0, 8, 36] }}
         gl={{
           powerPreference: "high-performance",
           alpha: false,
@@ -453,10 +519,10 @@ const App = () => {
           depth: false,
         }}
       >
-        <Camera />
-        <OrbitControls />
+        <WrappedOrbitControls />
         <SolarSystem />
         <Effects />
+        <Views />
       </Canvas>
       <UI />
     </>
