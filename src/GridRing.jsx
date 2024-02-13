@@ -53,7 +53,14 @@ const GridRingMaterial = shaderMaterial(
 		}
 
     void main() {
-			float g1 = getRing(radius, lineThickness);
+			float g1 = getRing(.3 * 4., lineThickness);
+			float g2 = getRing(.3 * 5., lineThickness);
+			float g3 = getRing(.3 * 6., lineThickness);
+			float g4 = getRing(.3 * 7., lineThickness);
+			float g5 = getRing(.3 * 10., lineThickness);
+			float g6 = getRing(.3 * 13., lineThickness);
+			float g7 = getRing(.3 * 15., lineThickness);
+			float g8 = getRing(.3 * 17., lineThickness);
 			float fadeDistance = 20.;
 			float fadeStrength = 1.;
 
@@ -61,7 +68,7 @@ const GridRingMaterial = shaderMaterial(
       float d = 1.0 - min(dist / fadeDistance, 1.0);
       vec3 color = lineColor;
 
-      gl_FragColor = vec4(color, g1 * pow(d, fadeStrength));
+      gl_FragColor = vec4(color, (g1 + g2 + g3 + g4 + g5 + g6 + g7 + g8) * pow(d, fadeStrength));
       gl_FragColor.a *= .75; // This is to align with drei's <Grid>
       if (gl_FragColor.a <= 0.0) discard;
 
@@ -69,18 +76,18 @@ const GridRingMaterial = shaderMaterial(
       #include <colorspace_fragment>
     }
   `,
-	(self) => {
-		self.blending = THREE.AdditiveBlending;
-	}
+  self => {
+    self.blending = THREE.AdditiveBlending;
+  }
 );
 
 const GridRing = React.forwardRef(
   (
     {
       args,
-			radius = 1.0,
-			lineThickness = 0.5,
-      lineColor = "#000000", 
+      radius = 1.0,
+      lineThickness = 0.5,
+      lineColor = "#000000",
       fadeDistance = 100,
       fadeStrength = 1,
       side = THREE.DoubleSide,
