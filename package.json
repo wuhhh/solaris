@@ -19,7 +19,7 @@
     "@react-three/fiber": "^8.15.15",
     "@react-three/postprocessing": "^2.15.12",
     "gsap": "^3.12.5",
-    "postprocessing": "^7.0.0-alpha-1",
+    "postprocessing": "^6.34.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.161.0",
