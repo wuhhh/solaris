@@ -8,6 +8,7 @@ import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { Grid } from "./Grid";
 import { GridRing } from "./GridRing";
+// import { MyCustomEffect } from "./CustomEffect";
 import UI from "./UI";
 import "./OrbitRingMaterial";
 import useStore from "./stores/useStore";
@@ -53,7 +54,6 @@ const SolarSystem = () => {
   // Given a planet, return a position on grid
   const getPosition = planet => {
     const g1 = gridConfig.cellSize;
-    const g2 = gridConfig.sectionSize;
     const start = 0;
 
     if (planet === "sun") return [start, 0, 0];
@@ -83,7 +83,7 @@ const SolarSystem = () => {
           genDirLightColor: "#ffffff",
           genAmbientLightEnabled: true,
           genAmbientLightIntensity: 8,
-          genPointLightEnabled: true,
+          genPointLightEnabled: false,
           genPointLightIntensity: 60,
           genPointLightColor: "#08c7ff",
         },
@@ -287,9 +287,13 @@ const SolarSystem = () => {
             )}
 
             <Grid renderOrder={1} args={gridSize} {...gridConfig} />
+            {/* <GridRing position={getPosition("sun")} args={[10.2, 10.2]} radius={1.1} lineThickness={4} lineColor={0xff8686} /> */}
           </group>
         </Float>
       </group>
+
+      {/* <RingTest /> */}
+
       <Clouds material={THREE.MeshBasicMaterial}>
         {systemData.cloud1Visible && (
           <Cloud
@@ -350,9 +354,6 @@ const Camera = props => {
       onUpdate: () => {
         cameraRef.current.lookAt(0, 0, 0);
       },
-      // onComplete: () => {
-      //   cameraRef.current.lookAt(0, 0, 0);
-      // },
     });
   });
 
@@ -391,11 +392,7 @@ const RingTest = props => {
   );
 };
 
-/**
- * App
- */
-
-const App = () => {
+const Effects = () => {
   const postConfig = useControls(
     "Post",
     {
@@ -405,6 +402,13 @@ const App = () => {
       bloomOpacity: 1.1,
       bloomThreshold: -0.4,
       bloomSmoothing: 1.4,
+      glitch: false,
+      glitchColumns: 0.05,
+      glitchDelay: [1.5, 3.5],
+      glitchDtSize: 64,
+      glitchDuration: [0.6, 1.0],
+      glitchStrength: [0.3, 1.0],
+      glitchRatio: 0.85,
       noise: true,
       noiseIntensity: 0.05,
       vignette: true,
@@ -415,34 +419,44 @@ const App = () => {
   );
 
   return (
+    <EffectComposer multisampling={0} disableNormalPass={true}>
+      {postConfig.bloom && (
+        <Bloom
+          mipmapBlur={postConfig.bloomMipmapBlur}
+          intensity={postConfig.bloomIntensity}
+          luminanceThreshold={postConfig.bloomThreshold}
+          luminanceSmoothing={postConfig.bloomSmoothing}
+          height={1024}
+          opacity={postConfig.bloomOpacity}
+        />
+      )}
+      {postConfig.noise && <Noise opacity={postConfig.noiseIntensity} />}
+      {postConfig.vignette && <Vignette eskil={false} offset={postConfig.vignetteOffset} darkness={postConfig.vignetteDarkness} />}
+    </EffectComposer>
+  );
+};
+
+/**
+ * App
+ */
+
+const App = () => {
+  return (
     <>
       <Leva collapsed />
       <Canvas
         gl={{
           powerPreference: "high-performance",
           alpha: false,
-          antialias: !postConfig.bloom && !postConfig.noise,
+          antialias: false,
           stencil: false,
           depth: false,
         }}
       >
         <Camera />
-        {/* <OrbitControls /> */}
+        <OrbitControls />
         <SolarSystem />
-        <EffectComposer multisampling={0} disableNormalPass={true}>
-          {postConfig.bloom && (
-            <Bloom
-              mipmapBlur={postConfig.bloomMipmapBlur}
-              intensity={postConfig.bloomIntensity}
-              luminanceThreshold={postConfig.bloomThreshold}
-              luminanceSmoothing={postConfig.bloomSmoothing}
-              height={1024}
-              opacity={postConfig.bloomOpacity}
-            />
-          )}
-          {postConfig.noise && <Noise opacity={postConfig.noiseIntensity} />}
-          {postConfig.vignette && <Vignette eskil={false} offset={postConfig.vignetteOffset} darkness={postConfig.vignetteDarkness} />}
-        </EffectComposer>
+        <Effects />
       </Canvas>
       <UI />
     </>
