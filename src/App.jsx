@@ -359,7 +359,7 @@ const Views = () => {
       gsap.to(solarSystemRef.rotation, {
         duration: 5,
         x: 0,
-        y: -4.6,
+        y: -2.3,
         z: 0,
         ease: "power1.inOut",
       });
@@ -425,7 +425,7 @@ const Views = () => {
       gsap.to(solarSystemRef.rotation, {
         duration: 5,
         x: 0,
-        y: 0,
+        y: -2.3,
         z: 0,
         ease: "power1.inOut",
       });
