@@ -25,6 +25,7 @@ const SolarSystem = () => {
   const sunRef = useRef();
   const planetsRef = useRef({});
   const planets = ["mer", "ven", "ear", "mar", "jup", "sat", "ura", "nep"];
+  const starsRef = useRef();
 
   // Assign a ref to each planet
   const assignPlanetRef = planet => ref => {
@@ -44,8 +45,8 @@ const SolarSystem = () => {
       sectionThickness: { value: 3, min: 0, max: 100, step: 0.1 },
       sectionColor: "#ff8686",
       circleGridMaxRadius: { value: 19, min: 1, max: 100, step: 1 },
-      fadeDistance: { value: 21, min: 0, max: 100, step: 1 },
-      fadeStrength: { value: 1, min: 0, max: 1, step: 0.1 },
+      fadeDistance: { value: 20, min: 0, max: 100, step: 1 },
+      fadeStrength: { value: 1, min: 0, max: 10, step: 0.1 },
       followCamera: false,
       infiniteGrid: true,
     },
@@ -221,18 +222,20 @@ const SolarSystem = () => {
     c
   );
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, delta) => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
       const orbitSpeed = systemData[p + "OrbitSpeed"];
       pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
       pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
     });
+
+    starsRef.current.rotation.y += delta * 0.025;
   });
 
   return (
     <>
-      <Stars radius={5} depth={50} count={20000} factor={4} saturation={1} speed={0} fade />
+      <Stars ref={starsRef} radius={0.1} depth={200} count={20000} factor={8} saturation={1} speed={0} fade />
       <group ref={setSolarSystemRef} position={systemData.genSystemPosition} rotation={systemData.genSystemRotation}>
         <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
           <group>
@@ -294,6 +297,8 @@ const SolarSystem = () => {
               radius={1.1}
               lineThickness={4}
               lineColor={gridConfig.sectionColor}
+              fadeDistance={gridConfig.fadeDistance}
+              fadeStrength={gridConfig.fadeStrength}
             />
           </group>
         </Float>
@@ -332,7 +337,7 @@ const SolarSystem = () => {
  */
 
 const Views = () => {
-  const { preset, setPresetIsTransitioning, solarSystemRef } = useStore();
+  const { preset, presetIsTransitioning, setPresetIsTransitioning, solarSystemRef } = useStore();
   const { camera } = useThree();
   const onStart = () => setPresetIsTransitioning(true);
   const onComplete = () => setPresetIsTransitioning(false);
@@ -382,7 +387,7 @@ const Views = () => {
         y: 2,
         z: 8,
         ease: "power1.inOut",
-        onStart,
+        // onStart,
         onComplete,
         onUpdate: () => {
           camera.lookAt(0, 0, 0);
@@ -412,10 +417,10 @@ const Views = () => {
       gsap.to(camera.position, {
         duration: 5,
         x: 0,
-        y: 23,
+        y: 28,
         z: 0,
         ease: "power1.inOut",
-        onStart,
+        // onStart,
         onComplete,
         onUpdate: () => {
           camera.lookAt(0, 0, 0);
@@ -519,7 +524,7 @@ const App = () => {
           depth: false,
         }}
       >
-        <WrappedOrbitControls />
+        {/* <WrappedOrbitControls /> */}
         <SolarSystem />
         <Effects />
         <Views />

@@ -1,10 +1,11 @@
 import useStore from "./stores/useStore";
 
 export default function UI(props) {
-  const { preset, setPreset, presetIsTransitioning } = useStore();
+  const { preset, setPreset, presetIsTransitioning, setPresetIsTransitioning } = useStore();
 
   const handleClick = preset => {
     if (!presetIsTransitioning) {
+      setPresetIsTransitioning(true);
       setPreset(preset);
     }
   };
@@ -15,13 +16,12 @@ export default function UI(props) {
         <button onClick={() => handleClick("default")} className={`${preset === "default" ? "text-orange-400" : ""} pointer-events-auto`}>
           default
         </button>
-        <button onClick={() => handleClick("near")} className={`${preset === "far" ? "text-orange-400" : ""} pointer-events-auto`}>
+        <button onClick={() => handleClick("near")} className={`${preset === "near" ? "text-orange-400" : ""} pointer-events-auto`}>
           near
         </button>
         <button onClick={() => handleClick("top")} className={`${preset === "top" ? "text-orange-400" : ""} pointer-events-auto`}>
           top
         </button>
-        <span>{preset}</span>
       </div>
     </div>
   );

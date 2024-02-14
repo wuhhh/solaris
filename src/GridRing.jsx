@@ -25,7 +25,6 @@ const GridRingMaterial = shaderMaterial(
 
     uniform vec3 worldCamProjPosition;
     uniform vec3 worldPlanePosition;
-    uniform float fadeDistance;
 
     void main() {
       localPosition = position.xzy;
@@ -41,6 +40,8 @@ const GridRingMaterial = shaderMaterial(
     uniform float radius;
     uniform vec3 lineColor;
     uniform float lineThickness;
+		uniform float fadeDistance;
+		uniform float fadeStrength;
 
 		float getRing(float radius, float thickness) {
 			if (thickness <= 0.0) {
@@ -61,8 +62,8 @@ const GridRingMaterial = shaderMaterial(
 			float g6 = getRing(.3 * 14., lineThickness);
 			float g7 = getRing(.3 * 16., lineThickness);
 			float g8 = getRing(.3 * 18., lineThickness);
-			float fadeDistance = 20.;
-			float fadeStrength = 1.;
+			// float fadeDistance = 20.;
+			// float fadeStrength = 1.;
 
 			float dist = distance(worldCamProjPosition, worldPosition.xyz);
       float d = 1.0 - min(dist / fadeDistance, 1.0);
