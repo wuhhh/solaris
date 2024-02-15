@@ -7,10 +7,12 @@ import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocess
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { GridRing } from "./GridRing";
+import DustRing from "./Bubbles";
 // import { Grid } from "./Grid";
 // import { MyCustomEffect } from "./CustomEffect";
 import UI from "./UI";
 import "./OrbitRingMaterial";
+import "./PlanetMaterial";
 import useStore from "./stores/useStore";
 
 /**
@@ -85,7 +87,7 @@ const SolarSystem = () => {
           genDirLightColor: "#ffffff",
           genAmbientLightEnabled: true,
           genAmbientLightIntensity: 8,
-          genPointLightEnabled: false,
+          genPointLightEnabled: true,
           genPointLightIntensity: 60,
           genPointLightColor: "#08c7ff",
         },
@@ -290,7 +292,7 @@ const SolarSystem = () => {
               />
             )}
 
-            {/* <Grid renderOrder={1} args={gridSize} {...gridConfig} /> */}
+            <Grid renderOrder={1} args={gridSize} {...gridConfig} />
             <GridRing
               position={getPosition("sun")}
               args={[11.2, 11.2]}
@@ -506,6 +508,60 @@ const WrappedOrbitControls = () => {
   return <OrbitControls ref={orbitControlsRef} enablePan={false} />;
 };
 
+const Planet = () => {
+  const ref = useRef();
+
+  const config = useControls("Planet", {
+    uBaseAtmosMix: 1.3, // Going beyond 1.0 works well with bloom
+    uColor1: "#483314",
+    uColor2: "#a09533",
+    uColor3: "#fcbd6b",
+    uColor4: "#7c7a3d",
+    uColorAtmos1: "#000000",
+    uColorAtmos2: "#82e3ff",
+    uScale: 0.3,
+    uScaleX: 0.1,
+    uScaleY: 17,
+    uScaleAtmos: 0.7,
+    uScaleAtmosX: 0.2,
+    uScaleAtmosY: 20,
+    uSeed: {
+      value: 0,
+      min: 0,
+      max: 100,
+      step: 1,
+    },
+    uSpinX: 0.5,
+    uSpinY: 0,
+    uSeedAtmos: {
+      value: 0,
+      min: 0,
+      max: 100,
+      step: 1,
+    },
+    uSpinAtmosX: -0.5,
+    uSpinAtmosY: 0,
+    uStop1: 0,
+    uStop2: 0.3,
+    uStop3: 0.5,
+    uStop4: 0.7,
+    uStopAtmos1: 0.4,
+    uStopAtmos2: 0.6,
+    uTimeMult: 0.2,
+    uTimeMultAtmos: 0.2,
+  });
+
+  useFrame(({ clock }, delta) => {
+    ref.current.material.uniforms.uTime.value = clock.elapsedTime;
+  });
+
+  return (
+    <Sphere ref={ref} scale={[6, 6, 6]} args={[1, 64, 64]}>
+      <planetMaterial {...config} />
+    </Sphere>
+  );
+};
+
 /**
  * App
  */
@@ -524,8 +580,9 @@ const App = () => {
           depth: false,
         }}
       >
-        {/* <WrappedOrbitControls /> */}
-        <SolarSystem />
+        <WrappedOrbitControls />
+        {/* <SolarSystem /> */}
+        <Planet />
         <Effects />
         <Views />
       </Canvas>
