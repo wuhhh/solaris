@@ -292,7 +292,7 @@ const SolarSystem = () => {
               />
             )}
 
-            <Grid renderOrder={1} args={gridSize} {...gridConfig} />
+            {/* <Grid renderOrder={1} args={gridSize} {...gridConfig} /> */}
             <GridRing
               position={getPosition("sun")}
               args={[11.2, 11.2]}
@@ -556,7 +556,7 @@ const Planet = () => {
   });
 
   return (
-    <Sphere ref={ref} scale={[6, 6, 6]} args={[1, 64, 64]}>
+    <Sphere ref={ref} scale={[0.3, 0.3, 0.3]} position={[-2, 0, 0]} args={[1, 64, 64]}>
       <planetMaterial {...config} />
     </Sphere>
   );
@@ -581,8 +581,8 @@ const App = () => {
         }}
       >
         <WrappedOrbitControls />
-        {/* <SolarSystem /> */}
-        <Planet />
+        <SolarSystem />
+        {/* <Planet /> */}
         <Effects />
         <Views />
       </Canvas>
