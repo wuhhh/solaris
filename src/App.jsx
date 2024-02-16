@@ -519,6 +519,9 @@ const Planet = () => {
     uColor4: "#7c7a3d",
     uColorAtmos1: "#000000",
     uColorAtmos2: "#82e3ff",
+    uFresnelAmount: 0.5,
+    uFresnelPower: 2,
+    uFresnelColor: "#ffffff",
     uScale: 0.3,
     uScaleX: 0.1,
     uScaleY: 17,
@@ -556,7 +559,7 @@ const Planet = () => {
   });
 
   return (
-    <Sphere ref={ref} scale={[0.3, 0.3, 0.3]} position={[-2, 0, 0]} args={[1, 64, 64]}>
+    <Sphere ref={ref} scale={[6, 6, 6]} args={[1, 64, 64]}>
       <planetMaterial {...config} />
     </Sphere>
   );
@@ -581,8 +584,8 @@ const App = () => {
         }}
       >
         <WrappedOrbitControls />
-        <SolarSystem />
-        {/* <Planet /> */}
+        {/* <SolarSystem /> */}
+        <Planet />
         <Effects />
         <Views />
       </Canvas>

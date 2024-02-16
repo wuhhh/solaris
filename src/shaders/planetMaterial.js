@@ -36,6 +36,9 @@ const fragmentShader = `
 	uniform vec3 uColor4;
 	uniform vec3 uColorAtmos1;
 	uniform vec3 uColorAtmos2;
+	uniform float uFresnelAmount;
+	uniform float uFresnelPower;
+	uniform vec3 uFresnelColor;
 	uniform float uScale;
 	uniform float uScaleX;
 	uniform float uScaleY;
@@ -111,11 +114,12 @@ const fragmentShader = `
 
 		vec3 color = blendLinearDodge(baseColor, atmosColor, uBaseAtmosMix);
 
-		gl_FragColor = vec4(color, 1.0);
-
 		// add fresnel effect
-		// float f = dot(normalize(vec3(1, 0, -1)), normalize(vNormal));
-		// color += f * 0.2;
+		float f = dot(normalize(cameraPosition.xyz), normalize(vNormal.xyz));
+		f = pow(1.0 - f, uFresnelPower);
+		color = mix(color, uFresnelColor, f * uFresnelAmount);
+
+		gl_FragColor = vec4(color, 1.0);
 
 		#include <tonemapping_fragment>
 		#include <colorspace_fragment> 
