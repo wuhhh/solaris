@@ -6,13 +6,14 @@ import { vertexShader, fragmentShader } from "./shaders/planetMaterial";
 const PlanetMaterial = shaderMaterial(
   {
     uBaseAtmosMix: 1.3, // Going beyond 1.0 works well with bloom
+    uBloomIntensity: 2.5, // Multiply the final output by this value to increase bloom
     uColor1: new THREE.Color(0x483314),
     uColor2: new THREE.Color(0xa09533),
     uColor3: new THREE.Color(0xfcbd6b),
     uColor4: new THREE.Color(0x7c7a3d),
     uColorAtmos1: new THREE.Color(0x000000),
     uColorAtmos2: new THREE.Color(0x82e3ff),
-    uFresnelAmount: 0.5,
+    uFresnelAmount: 0,
     uFresnelPower: 2,
     uFresnelColor: new THREE.Color(0xffffff),
     uScale: 0.3,

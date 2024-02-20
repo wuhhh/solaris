@@ -30,6 +30,7 @@ const vertexShader = `
 
 const fragmentShader = `
 	uniform float uBaseAtmosMix;
+	uniform float uBloomIntensity;
 	uniform vec3 uColor1;
 	uniform vec3 uColor2;
 	uniform vec3 uColor3;
@@ -115,13 +116,13 @@ const fragmentShader = `
 		vec3 color = blendLinearDodge(baseColor, atmosColor, uBaseAtmosMix);
 
 		// add fresnel effect
-		float f = dot(normalize(cameraPosition.xyz), normalize(vNormal.xyz));
-		f = pow(1.0 - f, uFresnelPower);
-		color = mix(color, uFresnelColor, f * uFresnelAmount);
+		// float f = dot(normalize(cameraPosition.xyz), normalize(vNormal.xyz));
+		// f = pow(1.0 - f, uFresnelPower);
+		// color = mix(color, uFresnelColor, f * uFresnelAmount);
 
-		gl_FragColor = vec4(color, 1.0);
+		gl_FragColor = vec4(color, 1.0) * uBloomIntensity;
 
-		#include <tonemapping_fragment>
+		// #include <tonemapping_fragment>
 		#include <colorspace_fragment> 
 	}
 `;

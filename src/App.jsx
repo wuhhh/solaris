@@ -1,15 +1,16 @@
-import React, { useEffect, useRef } from "react";
+import React, { forwardRef, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { Billboard, Circle, Cloud, Clouds, Float, OrbitControls, PerspectiveCamera, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
-import { Bloom, EffectComposer, Noise, Vignette } from "@react-three/postprocessing";
+import { Bloom, EffectComposer, Noise, TiltShift2, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { GridRing } from "./GridRing";
 import DustRing from "./Bubbles";
 // import { Grid } from "./Grid";
 // import { MyCustomEffect } from "./CustomEffect";
+import getPlanetConfig from "./PlanetMaterialConfig";
 import UI from "./UI";
 import "./OrbitRingMaterial";
 import "./PlanetMaterial";
@@ -22,7 +23,8 @@ import useStore from "./stores/useStore";
 const SolarSystem = () => {
   const setSolarSystemRef = useStore(state => state.setSolarSystemRef);
   const { width } = useThree(state => state.viewport);
-  const randomStart = Math.random() * 1000;
+  const randomStart = 1;
+  // const randomStart = Math.random() * 1000;
   const c = { collapsed: true };
   const sunRef = useRef();
   const planetsRef = useRef({});
@@ -103,64 +105,72 @@ const SolarSystem = () => {
       mercury: folder(
         {
           merScale: 0.008,
-          merColor: "#ccd1bc",
+          // merColor: "#ccd1bc",
           merOrbitSpeed: 1,
+          ...getPlanetConfig("mer"),
         },
         c
       ),
       venus: folder(
         {
           venScale: 0.02,
-          venColor: "#8398aa",
-          venOrbitSpeed: 0.8,
+          // venColor: "#8398aa",
+          venOrbitSpeed: -0.8,
+          ...getPlanetConfig("ven"),
         },
         c
       ),
       earth: folder(
         {
           earScale: 0.02,
-          earColor: "#3f6aeb",
+          // earColor: "#3f6aeb",
           earOrbitSpeed: 0.6,
+          ...getPlanetConfig("ear"),
         },
         c
       ),
       mars: folder(
         {
           marScale: 0.01,
-          marColor: "#db2121",
+          // marColor: "#db2121",
           marOrbitSpeed: 0.4,
+          ...getPlanetConfig("mar"),
         },
         c
       ),
       jupiter: folder(
         {
           jupScale: 0.1,
-          jupColor: "#ff6900",
+          // jupColor: "#ff6900",
           jupOrbitSpeed: 0.3,
+          ...getPlanetConfig("jup"),
         },
         c
       ),
       saturn: folder(
         {
           satScale: 0.08,
-          satColor: "#8d89e2",
+          // satColor: "#8d89e2",
           satOrbitSpeed: 0.2,
+          ...getPlanetConfig("sat"),
         },
         c
       ),
       uranus: folder(
         {
           uraScale: 0.06,
-          uraColor: "#5e7f93",
+          // uraColor: "#5e7f93",
           uraOrbitSpeed: 0.1,
+          ...getPlanetConfig("ura"),
         },
         c
       ),
       neptune: folder(
         {
           nepScale: 0.06,
-          nepColor: "#00ffec",
+          // nepColor: "#00ffec",
           nepOrbitSpeed: 0.05,
+          ...getPlanetConfig("nep"),
         },
         c
       ),
@@ -262,19 +272,63 @@ const SolarSystem = () => {
 
             {planets.map(planet => {
               return (
-                <Sphere
+                <Planet
+                  prefix={planet}
+                  config={{
+                    uBaseAtmosMix: systemData[planet + "_uBaseAtmosMix"],
+                    uBloomIntensity: systemData[planet + "_uBloomIntensity"],
+                    uColor1: systemData[planet + "_uColor1"],
+                    uColor2: systemData[planet + "_uColor2"],
+                    uColor3: systemData[planet + "_uColor3"],
+                    uColor4: systemData[planet + "_uColor4"],
+                    uColorAtmos1: systemData[planet + "_uColorAtmos1"],
+                    uColorAtmos2: systemData[planet + "_uColorAtmos2"],
+                    uFresnelAmount: systemData[planet + "_uFresnelAmount"],
+                    uFresnelPower: systemData[planet + "_uFresnelPower"],
+                    uFresnelColor: systemData[planet + "_uFresnelColor"],
+                    uScale: systemData[planet + "_uScale"],
+                    uScaleX: systemData[planet + "_uScaleX"],
+                    uScaleY: systemData[planet + "_uScaleY"],
+                    uScaleAtmos: systemData[planet + "_uScaleAtmos"],
+                    uScaleAtmosX: systemData[planet + "_uScaleAtmosX"],
+                    uScaleAtmosY: systemData[planet + "_uScaleAtmosY"],
+                    uSeed: systemData[planet + "_uSeed"],
+                    uSpinX: systemData[planet + "_uSpinX"],
+                    uSpinY: systemData[planet + "_uSpinY"],
+                    uSeedAtmos: systemData[planet + "_uSeedAtmos"],
+                    uSpinAtmosX: systemData[planet + "_uSpinAtmosX"],
+                    uSpinAtmosY: systemData[planet + "_uSpinAtmosY"],
+                    uStop1: systemData[planet + "_uStop1"],
+                    uStop2: systemData[planet + "_uStop2"],
+                    uStop3: systemData[planet + "_uStop3"],
+                    uStop4: systemData[planet + "_uStop4"],
+                    uStopAtmos1: systemData[planet + "_uStopAtmos1"],
+                    uStopAtmos2: systemData[planet + "_uStopAtmos2"],
+                    uTimeMult: systemData[planet + "_uTimeMult"],
+                    uTimeMultAtmos: systemData[planet + "_uTimeMultAtmos"],
+                  }}
                   ref={assignPlanetRef(planet)}
                   key={planet}
-                  args={[1, 64, 64]}
                   position={getPosition(planet)}
                   scale={[
                     systemData[planet + "Scale"] * systemData.genScaleMult,
                     systemData[planet + "Scale"] * systemData.genScaleMult,
                     systemData[planet + "Scale"] * systemData.genScaleMult,
                   ]}
-                >
-                  <meshStandardMaterial color={systemData[planet + "Color"]} />
-                </Sphere>
+                />
+                // <Sphere
+                //   ref={assignPlanetRef(planet)}
+                //   key={planet}
+                //   args={[1, 64, 64]}
+                //   position={getPosition(planet)}
+                //   scale={[
+                //     systemData[planet + "Scale"] * systemData.genScaleMult,
+                //     systemData[planet + "Scale"] * systemData.genScaleMult,
+                //     systemData[planet + "Scale"] * systemData.genScaleMult,
+                //   ]}
+                // >
+                //   <meshStandardMaterial color={systemData[planet + "Color"]} />
+                // </Sphere>
               );
             })}
 
@@ -465,8 +519,15 @@ const Effects = () => {
       glitchDuration: [0.6, 1.0],
       glitchStrength: [0.3, 1.0],
       glitchRatio: 0.85,
-      noise: true,
+      noise: false,
       noiseIntensity: 0.12,
+      tiltShift: false,
+      tiltShiftBlur: 0.15, // [0, 1], can go beyond 1 for extra
+      tiltShiftTaper: 0.5, // [0, 1], can go beyond 1 for extra
+      tileShiftStart: [0.5, 0], // [0,1] percentage x,y of screenspace
+      tileShiftEnd: [0.5, 1], // [0,1] percentage x,y of screenspace
+      tileShiftSamples: 10, // number of blur samples
+      tileShiftDirection: [1, 1], // direction of blur
       vignette: true,
       vignetteOffset: 0,
       vignetteDarkness: 1.3,
@@ -488,6 +549,16 @@ const Effects = () => {
       )}
       {postConfig.noise && <Noise opacity={postConfig.noiseIntensity} />}
       {postConfig.vignette && <Vignette eskil={false} offset={postConfig.vignetteOffset} darkness={postConfig.vignetteDarkness} />}
+      {postConfig.tiltShift && (
+        <TiltShift2
+          blur={postConfig.tiltShiftBlur}
+          taper={postConfig.tiltShiftTaper}
+          start={postConfig.tileShiftStart}
+          end={postConfig.tileShiftEnd}
+          samples={postConfig.tileShiftSamples}
+          direction={postConfig.tileShiftDirection}
+        />
+      )}
     </EffectComposer>
   );
 };
@@ -508,62 +579,19 @@ const WrappedOrbitControls = () => {
   return <OrbitControls ref={orbitControlsRef} enablePan={false} />;
 };
 
-const Planet = () => {
-  const ref = useRef();
-
-  const config = useControls("Planet", {
-    uBaseAtmosMix: 1.3, // Going beyond 1.0 works well with bloom
-    uColor1: "#483314",
-    uColor2: "#a09533",
-    uColor3: "#fcbd6b",
-    uColor4: "#7c7a3d",
-    uColorAtmos1: "#000000",
-    uColorAtmos2: "#82e3ff",
-    uFresnelAmount: 0.5,
-    uFresnelPower: 2,
-    uFresnelColor: "#ffffff",
-    uScale: 0.3,
-    uScaleX: 0.1,
-    uScaleY: 17,
-    uScaleAtmos: 0.7,
-    uScaleAtmosX: 0.2,
-    uScaleAtmosY: 20,
-    uSeed: {
-      value: 0,
-      min: 0,
-      max: 100,
-      step: 1,
-    },
-    uSpinX: 0.5,
-    uSpinY: 0,
-    uSeedAtmos: {
-      value: 0,
-      min: 0,
-      max: 100,
-      step: 1,
-    },
-    uSpinAtmosX: -0.5,
-    uSpinAtmosY: 0,
-    uStop1: 0,
-    uStop2: 0.3,
-    uStop3: 0.5,
-    uStop4: 0.7,
-    uStopAtmos1: 0.4,
-    uStopAtmos2: 0.6,
-    uTimeMult: 0.2,
-    uTimeMultAtmos: 0.2,
-  });
+const Planet = forwardRef(({ prefix, config, ...props }, ref) => {
+  const materialRef = useRef();
 
   useFrame(({ clock }, delta) => {
-    ref.current.material.uniforms.uTime.value = clock.elapsedTime;
+    materialRef.current.uniforms.uTime.value = clock.elapsedTime;
   });
 
   return (
-    <Sphere ref={ref} scale={[6, 6, 6]} args={[1, 64, 64]}>
-      <planetMaterial {...config} />
+    <Sphere ref={ref} {...props}>
+      <planetMaterial ref={materialRef} {...config} />
     </Sphere>
   );
-};
+});
 
 /**
  * App
@@ -572,7 +600,7 @@ const Planet = () => {
 const App = () => {
   return (
     <>
-      <Leva collapsed />
+      <Leva collapsed oneLineLabels />
       <Canvas
         camera={{ fov: 35, position: [0, 8, 36] }}
         gl={{
@@ -584,8 +612,7 @@ const App = () => {
         }}
       >
         <WrappedOrbitControls />
-        {/* <SolarSystem /> */}
-        <Planet />
+        <SolarSystem />
         <Effects />
         <Views />
       </Canvas>
