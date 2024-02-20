@@ -69,8 +69,8 @@ const GridRingMaterial = shaderMaterial(
       float d = 1.0 - min(dist / fadeDistance, 1.0);
       vec3 color = lineColor;
 
-      gl_FragColor = vec4(color, (g1 + g2 + g3 + g4 + g5 + g6 + g7 + g8) * pow(d, fadeStrength));
-      // gl_FragColor.a *= .75; // This is to align with drei's <Grid>
+      gl_FragColor = vec4(color, (g1 + g2 + g3 + g4 + g5 + g6 + g7 + g8) * pow(d, fadeStrength * .25));
+      gl_FragColor.a *= .75; // This is to align with drei's <Grid>
 			// Bump color for bloom
 			gl_FragColor.rgb *= 1.5;
       if (gl_FragColor.a <= 0.0) discard;
@@ -81,6 +81,7 @@ const GridRingMaterial = shaderMaterial(
   `,
   self => {
     self.blending = THREE.AdditiveBlending;
+    self.transparent = true;
   }
 );
 

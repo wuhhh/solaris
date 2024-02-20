@@ -21,7 +21,8 @@ const vertexShader = `
 	void main() {
 		gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
 		vec4 mvPosition = modelViewMatrix * vec4(position, 1.0);
-		vNormal = normal;
+		vec4 transformedNormal = modelMatrix * vec4(normal, 0.0);
+		vNormal = transformedNormal.xyz;
 		vPosition = position;
 		vUv = uv;
 		vViewPosition = -mvPosition.xyz;
@@ -116,7 +117,7 @@ const fragmentShader = `
 		vec3 color = blendLinearDodge(baseColor, atmosColor, uBaseAtmosMix);
 
 		// add fresnel effect
-		float f = dot(normalize(cameraPosition.xyz), normalize(vNormal.xyz));
+		float f = dot(normalize(cameraPosition.xyz), normalize(vNormal));
 		f = pow(1.0 - f, uFresnelPower);
 		color = mix(color, uFresnelColor, clamp(f * uFresnelAmount, 0., 1.));
 
