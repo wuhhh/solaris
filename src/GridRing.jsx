@@ -54,12 +54,12 @@ const GridRingMaterial = shaderMaterial(
 		}
 
     void main() {
-			float g1 = getRing(.3 * 5., lineThickness);
-			float g2 = getRing(.3 * 6., lineThickness);
-			float g3 = getRing(.3 * 7., lineThickness);
-			float g4 = getRing(.3 * 8., lineThickness);
-			float g5 = getRing(.3 * 11., lineThickness);
-			float g6 = getRing(.3 * 14., lineThickness);
+			float g1 = getRing(.3 * 4.5, lineThickness);
+			float g2 = getRing(.3 * 5.5, lineThickness);
+			float g3 = getRing(.3 * 6.5, lineThickness);
+			float g4 = getRing(.3 * 7.5, lineThickness);
+			float g5 = getRing(.3 * 9.5, lineThickness);
+			float g6 = getRing(.3 * 13., lineThickness);
 			float g7 = getRing(.3 * 16., lineThickness);
 			float g8 = getRing(.3 * 18., lineThickness);
 			// float fadeDistance = 20.;

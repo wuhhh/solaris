@@ -1,19 +1,18 @@
 import React, { forwardRef, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Billboard, Circle, Cloud, Clouds, Float, OrbitControls, PerspectiveCamera, Sphere, Stars } from "@react-three/drei";
+import { Billboard, Circle, Cloud, Clouds, Float, OrbitControls, PerspectiveCamera, Plane, Ring, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, EffectComposer, Noise, TiltShift2, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { GridRing } from "./GridRing";
 import DustRing from "./Bubbles";
-// import { Grid } from "./Grid";
 // import { MyCustomEffect } from "./CustomEffect";
 import { getPlanetConfig, getPlanetControls } from "./PlanetMaterialConfig";
 import UI from "./UI";
-import "./OrbitRingMaterial";
 import "./PlanetMaterial";
+import PlanetRingsMaterial from "./PlanetRingsMaterial";
 import useStore from "./stores/useStore";
 
 /**
@@ -30,6 +29,7 @@ const SolarSystem = () => {
   const planetsRef = useRef({});
   const planets = ["mer", "ven", "ear", "mar", "jup", "sat", "ura", "nep"];
   const starsRef = useRef();
+  const saturnRingsRef = useRef();
 
   // Assign a ref to each planet
   const assignPlanetRef = planet => ref => {
@@ -64,12 +64,12 @@ const SolarSystem = () => {
     const start = 0;
 
     if (planet === "sun") return [start, 0, 0];
-    if (planet === "mer") return [start + g1 * 5, 0, 0];
-    if (planet === "ven") return [start + g1 * 6, 0, 0];
-    if (planet === "ear") return [start + g1 * 7, 0, 0];
-    if (planet === "mar") return [start + g1 * 8, 0, 0];
-    if (planet === "jup") return [start + g1 * 11, 0, 0];
-    if (planet === "sat") return [start + g1 * 14, 0, 0];
+    if (planet === "mer") return [start + g1 * 4.5, 0, 0];
+    if (planet === "ven") return [start + g1 * 5.5, 0, 0];
+    if (planet === "ear") return [start + g1 * 6.5, 0, 0];
+    if (planet === "mar") return [start + g1 * 7.5, 0, 0];
+    if (planet === "jup") return [start + g1 * 9.5, 0, 0];
+    if (planet === "sat") return [start + g1 * 13, 0, 0];
     if (planet === "ura") return [start + g1 * 16, 0, 0];
     if (planet === "nep") return [start + g1 * 18, 0, 0];
 
@@ -240,8 +240,8 @@ const SolarSystem = () => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
       const orbitSpeed = systemData[p + "OrbitSpeed"];
-      pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
-      pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      // pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      // pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
     });
 
     starsRef.current.rotation.y += delta * 0.025;
@@ -272,23 +272,6 @@ const SolarSystem = () => {
                 </Circle>
               </Billboard> */}
             </Planet>
-            {/* <Sphere
-              ref={sunRef}
-              args={[1, 64, 64]}
-              position={getPosition("sun")}
-              scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
-            >
-              <Billboard>
-                <Circle
-                  args={[1.05, 128]}
-                  position={getPosition("sun")}
-                  scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
-                >
-                  <meshStandardMaterial color='#ff8686' />
-                </Circle>
-              </Billboard>
-              <meshBasicMaterial color='black' />
-            </Sphere> */}
 
             {planets.map(planet => {
               return (
@@ -304,7 +287,17 @@ const SolarSystem = () => {
                     systemData[planet + "Scale"] * systemData.genScaleMult,
                     systemData[planet + "Scale"] * systemData.genScaleMult,
                   ]}
-                />
+                >
+                  {planet === "sat" && (
+                    <PlanetRings
+                      ref={saturnRingsRef}
+                      rotation={[-Math.PI * 0.5, 0, 0]}
+                      position={[0, 0.01, 0]}
+                      scale={[3.65, 3.65, 3.65]}
+                      uRadiusInner={0.36}
+                    />
+                  )}
+                </Planet>
               );
             })}
 
@@ -322,7 +315,6 @@ const SolarSystem = () => {
               />
             )}
 
-            {/* <Grid renderOrder={1} args={gridSize} {...gridConfig} /> */}
             <GridRing
               position={getPosition("sun")}
               args={[11.2, 11.2]}
@@ -363,6 +355,18 @@ const SolarSystem = () => {
     </>
   );
 };
+
+/**
+ * PlanetRings
+ */
+
+const PlanetRings = forwardRef(({ uRadiusInner, ...props }, ref) => {
+  return (
+    <Plane renderOrder={1} ref={ref} {...props}>
+      <planetRingsMaterial key={PlanetRingsMaterial.key} uRadiusInner={uRadiusInner} />
+    </Plane>
+  );
+});
 
 /**
  * Views
@@ -428,7 +432,7 @@ const Views = () => {
 
       gsap.to(solarSystemRef.rotation, {
         duration: 5,
-        x: 0,
+        x: 0.26,
         y: -2.3,
         z: 0.1,
         ease: "power1.inOut",
@@ -477,6 +481,10 @@ const Views = () => {
     }
   }, [preset]);
 };
+
+/**
+ * Effects
+ */
 
 const Effects = () => {
   const postConfig = useControls(
@@ -552,8 +560,12 @@ const WrappedOrbitControls = () => {
     orbitControlsRef.current.enable = !presetIsTransitioning;
   }, [presetIsTransitioning]);
 
-  return <OrbitControls ref={orbitControlsRef} enablePan={false} />;
+  return <OrbitControls ref={orbitControlsRef} enablePan={true} />;
 };
+
+/**
+ * Planet
+ */
 
 const Planet = forwardRef(({ prefix, config, ...props }, ref) => {
   const materialRef = useRef();
