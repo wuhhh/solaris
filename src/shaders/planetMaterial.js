@@ -116,9 +116,9 @@ const fragmentShader = `
 		vec3 color = blendLinearDodge(baseColor, atmosColor, uBaseAtmosMix);
 
 		// add fresnel effect
-		// float f = dot(normalize(cameraPosition.xyz), normalize(vNormal.xyz));
-		// f = pow(1.0 - f, uFresnelPower);
-		// color = mix(color, uFresnelColor, f * uFresnelAmount);
+		float f = dot(normalize(cameraPosition.xyz), normalize(vNormal.xyz));
+		f = pow(1.0 - f, uFresnelPower);
+		color = mix(color, uFresnelColor, clamp(f * uFresnelAmount, 0., 1.));
 
 		gl_FragColor = vec4(color, 1.0) * uBloomIntensity;
 

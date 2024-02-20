@@ -10,7 +10,7 @@ import { GridRing } from "./GridRing";
 import DustRing from "./Bubbles";
 // import { Grid } from "./Grid";
 // import { MyCustomEffect } from "./CustomEffect";
-import getPlanetConfig from "./PlanetMaterialConfig";
+import { getPlanetConfig, getPlanetControls } from "./PlanetMaterialConfig";
 import UI from "./UI";
 import "./OrbitRingMaterial";
 import "./PlanetMaterial";
@@ -48,6 +48,7 @@ const SolarSystem = () => {
       sectionSize: { value: 1.2, min: 0, max: 10, step: 0.1 },
       sectionThickness: { value: 3, min: 0, max: 100, step: 0.1 },
       sectionColor: "#ff8686",
+      // sectionColor: "#ff9d58",
       circleGridMaxRadius: { value: 19, min: 1, max: 100, step: 1 },
       fadeDistance: { value: 20, min: 0, max: 100, step: 1 },
       fadeStrength: { value: 1, min: 0, max: 10, step: 0.1 },
@@ -99,6 +100,7 @@ const SolarSystem = () => {
         {
           sunPosition: [-width * 0.5, 0, 0],
           sunScale: 1,
+          ...getPlanetControls("sun"),
         },
         c
       ),
@@ -107,7 +109,7 @@ const SolarSystem = () => {
           merScale: 0.008,
           // merColor: "#ccd1bc",
           merOrbitSpeed: 1,
-          ...getPlanetConfig("mer"),
+          ...getPlanetControls("mer"),
         },
         c
       ),
@@ -116,7 +118,7 @@ const SolarSystem = () => {
           venScale: 0.02,
           // venColor: "#8398aa",
           venOrbitSpeed: -0.8,
-          ...getPlanetConfig("ven"),
+          ...getPlanetControls("ven"),
         },
         c
       ),
@@ -125,7 +127,7 @@ const SolarSystem = () => {
           earScale: 0.02,
           // earColor: "#3f6aeb",
           earOrbitSpeed: 0.6,
-          ...getPlanetConfig("ear"),
+          ...getPlanetControls("ear"),
         },
         c
       ),
@@ -134,7 +136,7 @@ const SolarSystem = () => {
           marScale: 0.01,
           // marColor: "#db2121",
           marOrbitSpeed: 0.4,
-          ...getPlanetConfig("mar"),
+          ...getPlanetControls("mar"),
         },
         c
       ),
@@ -143,7 +145,7 @@ const SolarSystem = () => {
           jupScale: 0.1,
           // jupColor: "#ff6900",
           jupOrbitSpeed: 0.3,
-          ...getPlanetConfig("jup"),
+          ...getPlanetControls("jup"),
         },
         c
       ),
@@ -152,7 +154,7 @@ const SolarSystem = () => {
           satScale: 0.08,
           // satColor: "#8d89e2",
           satOrbitSpeed: 0.2,
-          ...getPlanetConfig("sat"),
+          ...getPlanetControls("sat"),
         },
         c
       ),
@@ -161,7 +163,7 @@ const SolarSystem = () => {
           uraScale: 0.06,
           // uraColor: "#5e7f93",
           uraOrbitSpeed: 0.1,
-          ...getPlanetConfig("ura"),
+          ...getPlanetControls("ura"),
         },
         c
       ),
@@ -170,7 +172,7 @@ const SolarSystem = () => {
           nepScale: 0.06,
           // nepColor: "#00ffec",
           nepOrbitSpeed: 0.05,
-          ...getPlanetConfig("nep"),
+          ...getPlanetControls("nep"),
         },
         c
       ),
@@ -252,7 +254,25 @@ const SolarSystem = () => {
         <Float floatIntensity={0.5} floatingRange={0.25} rotationIntensity={0.6} speed={0.7}>
           <group>
             {/* Sun */}
-            <Sphere
+            <Planet
+              args={[1, 64, 64]}
+              prefix='sun'
+              config={getPlanetConfig("sun", systemData)}
+              ref={sunRef}
+              position={getPosition("sun")}
+              scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
+            >
+              {/* <Billboard>
+                <Circle
+                  args={[1.05, 128]}
+                  position={getPosition("sun")}
+                  scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
+                >
+                  <meshStandardMaterial color='#ffd682' />
+                </Circle>
+              </Billboard> */}
+            </Planet>
+            {/* <Sphere
               ref={sunRef}
               args={[1, 64, 64]}
               position={getPosition("sun")}
@@ -268,45 +288,14 @@ const SolarSystem = () => {
                 </Circle>
               </Billboard>
               <meshBasicMaterial color='black' />
-            </Sphere>
+            </Sphere> */}
 
             {planets.map(planet => {
               return (
                 <Planet
+                  args={[1, 64, 64]}
                   prefix={planet}
-                  config={{
-                    uBaseAtmosMix: systemData[planet + "_uBaseAtmosMix"],
-                    uBloomIntensity: systemData[planet + "_uBloomIntensity"],
-                    uColor1: systemData[planet + "_uColor1"],
-                    uColor2: systemData[planet + "_uColor2"],
-                    uColor3: systemData[planet + "_uColor3"],
-                    uColor4: systemData[planet + "_uColor4"],
-                    uColorAtmos1: systemData[planet + "_uColorAtmos1"],
-                    uColorAtmos2: systemData[planet + "_uColorAtmos2"],
-                    uFresnelAmount: systemData[planet + "_uFresnelAmount"],
-                    uFresnelPower: systemData[planet + "_uFresnelPower"],
-                    uFresnelColor: systemData[planet + "_uFresnelColor"],
-                    uScale: systemData[planet + "_uScale"],
-                    uScaleX: systemData[planet + "_uScaleX"],
-                    uScaleY: systemData[planet + "_uScaleY"],
-                    uScaleAtmos: systemData[planet + "_uScaleAtmos"],
-                    uScaleAtmosX: systemData[planet + "_uScaleAtmosX"],
-                    uScaleAtmosY: systemData[planet + "_uScaleAtmosY"],
-                    uSeed: systemData[planet + "_uSeed"],
-                    uSpinX: systemData[planet + "_uSpinX"],
-                    uSpinY: systemData[planet + "_uSpinY"],
-                    uSeedAtmos: systemData[planet + "_uSeedAtmos"],
-                    uSpinAtmosX: systemData[planet + "_uSpinAtmosX"],
-                    uSpinAtmosY: systemData[planet + "_uSpinAtmosY"],
-                    uStop1: systemData[planet + "_uStop1"],
-                    uStop2: systemData[planet + "_uStop2"],
-                    uStop3: systemData[planet + "_uStop3"],
-                    uStop4: systemData[planet + "_uStop4"],
-                    uStopAtmos1: systemData[planet + "_uStopAtmos1"],
-                    uStopAtmos2: systemData[planet + "_uStopAtmos2"],
-                    uTimeMult: systemData[planet + "_uTimeMult"],
-                    uTimeMultAtmos: systemData[planet + "_uTimeMultAtmos"],
-                  }}
+                  config={getPlanetConfig(planet, systemData)}
                   ref={assignPlanetRef(planet)}
                   key={planet}
                   position={getPosition(planet)}
@@ -316,19 +305,6 @@ const SolarSystem = () => {
                     systemData[planet + "Scale"] * systemData.genScaleMult,
                   ]}
                 />
-                // <Sphere
-                //   ref={assignPlanetRef(planet)}
-                //   key={planet}
-                //   args={[1, 64, 64]}
-                //   position={getPosition(planet)}
-                //   scale={[
-                //     systemData[planet + "Scale"] * systemData.genScaleMult,
-                //     systemData[planet + "Scale"] * systemData.genScaleMult,
-                //     systemData[planet + "Scale"] * systemData.genScaleMult,
-                //   ]}
-                // >
-                //   <meshStandardMaterial color={systemData[planet + "Color"]} />
-                // </Sphere>
               );
             })}
 
@@ -351,7 +327,7 @@ const SolarSystem = () => {
               position={getPosition("sun")}
               args={[11.2, 11.2]}
               radius={1.1}
-              lineThickness={4}
+              lineThickness={3}
               lineColor={gridConfig.sectionColor}
               fadeDistance={gridConfig.fadeDistance}
               fadeStrength={gridConfig.fadeStrength}
@@ -589,6 +565,7 @@ const Planet = forwardRef(({ prefix, config, ...props }, ref) => {
   return (
     <Sphere ref={ref} {...props}>
       <planetMaterial ref={materialRef} {...config} />
+      {props.children}
     </Sphere>
   );
 });
