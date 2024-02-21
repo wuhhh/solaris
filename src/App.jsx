@@ -22,8 +22,8 @@ import useStore from "./stores/useStore";
 const SolarSystem = () => {
   const setSolarSystemRef = useStore(state => state.setSolarSystemRef);
   const { width } = useThree(state => state.viewport);
-  const randomStart = 1;
-  // const randomStart = Math.random() * 1000;
+  // const randomStart = 1;
+  const randomStart = Math.random() * 1000;
   const c = { collapsed: true };
   const sunRef = useRef();
   const planetsRef = useRef({});
@@ -242,8 +242,8 @@ const SolarSystem = () => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
       const orbitSpeed = systemData[p + "OrbitSpeed"];
-      // pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
-      // pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
     });
 
     starsRef.current.rotation.y += delta * 0.025;
@@ -356,15 +356,28 @@ const SolarSystem = () => {
 
 const PlanetRings = forwardRef(({ uBaseColor, uBloomIntensity, uRadiusInner, ...props }, ref) => {
   const materialRef = useRef();
+  const { camera } = useThree();
+  const { solarSystemRef } = useStore();
 
-  const materialConfig = useControls("PlanetRings", {
-    uFadePower: 3,
-    uMult1: 17.3,
-    uMult2: 34,
-  });
+  const materialConfig = useControls(
+    "PlanetRings",
+    {
+      uFadePower: 3,
+      uMult1: 17.3,
+      uMult2: 34,
+    },
+    { collapsed: true }
+  );
 
   useFrame(({ clock }) => {
     materialRef.current.uniforms.uTime.value = clock.elapsedTime;
+
+    // Always face the camera
+    let distX = camera.position.x - ref.current.position.x;
+    let distZ = camera.position.z - ref.current.position.z;
+
+    // Here I'm negating the rotation from the group, it's horrible, but it works :D
+    ref.current.rotation.z = Math.atan2(distX, distZ) + Math.PI - solarSystemRef.rotation.y;
   });
 
   return (

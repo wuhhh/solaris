@@ -326,7 +326,7 @@ const configs = {
    */
   ura: {
     uBaseAtmosMix: 0,
-    uBloomIntensity: 1.7,
+    uBloomIntensity: 2.3,
     uColor1: "#2b9fad",
     uColor2: "#8cb9ba",
     uColor3: "#cebab6",

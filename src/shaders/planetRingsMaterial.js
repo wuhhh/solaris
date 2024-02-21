@@ -2,13 +2,10 @@ import { polarRemap } from "./glsl-functions";
 
 const vertexShader = `
 	uniform float uTime;
-	varying vec3 vNormal;
 	varying vec3 vPosition;
 	varying vec2 vUv;
 
 	void main() {
-		vec4 transformedNormal = modelMatrix * vec4(normal, 0.0);
-		vNormal = transformedNormal.xyz;
 		vPosition = position;
 		vUv = uv;
 		gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(position, 1.0);
@@ -23,7 +20,6 @@ const fragmentShader = `
 	uniform float uMult2;
 	uniform float uRadiusInner;
 	uniform float uTime;
-	varying vec3 vNormal;
 	varying vec3 vPosition;
 	varying vec2 vUv;
 
