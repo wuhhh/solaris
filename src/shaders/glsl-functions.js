@@ -716,6 +716,22 @@ const psrdnoise = `
 	#endif
 `;
 
+const getNoise = `
+	float getNoise(const in vec3 position, const in float time, const in float timeMult, const in float seed, const in float spinX, const in float spinY, const in float scale, const in float scaleX, const in float scaleY, out vec3 g) {
+		vec3 pos = position;
+		
+		pos = rotateY(pos, spinX * time * .1);
+		
+		pos.x *= scaleX;
+		pos.y *= scaleY;
+
+		vec3 v = vec3(scale * pos);
+		vec3 p = vec3(120., 120., 120.);
+
+		return psrdnoise(v, p, (time * timeMult) + seed, g);
+	}
+`;
+
 export {
   rotateY,
   rotate4dY,
@@ -728,4 +744,5 @@ export {
   permute,
   taylorInvSqrt,
   psrdnoise,
+  getNoise,
 };

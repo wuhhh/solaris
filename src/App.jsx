@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useRef } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Billboard, Circle, Cloud, Clouds, Float, OrbitControls, PerspectiveCamera, Plane, Ring, Sphere, Stars } from "@react-three/drei";
+import { Billboard, Circle, Cloud, Clouds, Float, OrbitControls, Plane, Ring, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, EffectComposer, Noise, TiltShift2, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
@@ -22,8 +22,8 @@ import useStore from "./stores/useStore";
 const SolarSystem = () => {
   const setSolarSystemRef = useStore(state => state.setSolarSystemRef);
   const { width } = useThree(state => state.viewport);
-  const randomStart = 1;
-  // const randomStart = Math.random() * 1000;
+  // const randomStart = 1;
+  const randomStart = Math.random() * 1000;
   const c = { collapsed: true };
   const sunRef = useRef();
   const planetsRef = useRef({});
@@ -151,7 +151,7 @@ const SolarSystem = () => {
       ),
       saturn: folder(
         {
-          satScale: 0.08,
+          satScale: 0.07,
           // satColor: "#8d89e2",
           satOrbitSpeed: 0.2,
           ...getPlanetControls("sat"),
@@ -240,8 +240,8 @@ const SolarSystem = () => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
       const orbitSpeed = systemData[p + "OrbitSpeed"];
-      // pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
-      // pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
     });
 
     starsRef.current.rotation.y += delta * 0.025;
@@ -293,8 +293,8 @@ const SolarSystem = () => {
                       ref={saturnRingsRef}
                       rotation={[-Math.PI * 0.5, 0, 0]}
                       position={[0, 0.01, 0]}
-                      scale={[3.65, 3.65, 3.65]}
-                      uRadiusInner={0.36}
+                      scale={[4, 4, 4]}
+                      uRadiusInner={0.3}
                     />
                   )}
                 </Planet>
@@ -361,9 +361,15 @@ const SolarSystem = () => {
  */
 
 const PlanetRings = forwardRef(({ uRadiusInner, ...props }, ref) => {
+  const materialRef = useRef();
+
+  useFrame(({ clock }) => {
+    materialRef.current.uniforms.uTime.value = clock.elapsedTime;
+  });
+
   return (
     <Plane renderOrder={1} ref={ref} {...props}>
-      <planetRingsMaterial key={PlanetRingsMaterial.key} uRadiusInner={uRadiusInner} />
+      <planetRingsMaterial ref={materialRef} key={PlanetRingsMaterial.key} uRadiusInner={uRadiusInner} />
     </Plane>
   );
 });

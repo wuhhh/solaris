@@ -5,7 +5,7 @@ import { vertexShader, fragmentShader } from "./shaders/planetRingsMaterial";
 
 const PlanetRingsMaterial = shaderMaterial(
   {
-    uBaseColor: new THREE.Color(0x8d89e2),
+    uBaseColor: new THREE.Color(0xe5af89),
     uRadiusInner: 0,
     uRadiusOuter: 1,
     uTime: 0,
