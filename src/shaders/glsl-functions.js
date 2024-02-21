@@ -732,6 +732,36 @@ const getNoise = `
 	}
 `;
 
+const polarRemap = `
+	#ifndef PI
+	#define PI 3.1415926535897932384626433832795
+	#endif
+	
+	vec2 polarRemap(vec2 uv) {
+		// Calculate center of the plane
+		vec2 center = vec2(0.5, 0.5); // assuming plane goes from 0 to 1
+
+		// Calculate vector from center to current uv coordinate
+		vec2 offset = uv - center;
+
+		// Calculate angle (theta) using atan2
+		float angle = atan(offset.y, offset.x);
+
+		// Calculate distance from center
+		float radius = length(offset);
+
+		// Map angle to [0, 1] range
+		float mappedAngle = (angle + PI) / (2.0 * PI);
+
+		// Optionally, you can adjust the radius to control the distortion strength
+		// For example:
+		// radius = sqrt(radius); // square root for smoother distortion
+
+		// Remap the polar coordinates back to cartesian
+		return vec2(mappedAngle, radius);
+	}
+`;
+
 export {
   rotateY,
   rotate4dY,
@@ -745,4 +775,5 @@ export {
   taylorInvSqrt,
   psrdnoise,
   getNoise,
+  polarRemap,
 };

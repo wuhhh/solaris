@@ -234,7 +234,7 @@ const configs = {
    */
   jup: {
     uBaseAtmosMix: 1,
-    uBloomIntensity: 3.2,
+    uBloomIntensity: 4.6,
     uColor1: "#904124",
     uColor2: "#ff4300",
     uColor3: "#b15717",

@@ -22,8 +22,8 @@ import useStore from "./stores/useStore";
 const SolarSystem = () => {
   const setSolarSystemRef = useStore(state => state.setSolarSystemRef);
   const { width } = useThree(state => state.viewport);
-  // const randomStart = 1;
-  const randomStart = Math.random() * 1000;
+  const randomStart = 1;
+  // const randomStart = Math.random() * 1000;
   const c = { collapsed: true };
   const sunRef = useRef();
   const planetsRef = useRef({});
@@ -154,6 +154,8 @@ const SolarSystem = () => {
           satScale: 0.07,
           // satColor: "#8d89e2",
           satOrbitSpeed: 0.2,
+          satRingColor: "#e6a97e",
+          satRingBloomIntensity: 4,
           ...getPlanetControls("sat"),
         },
         c
@@ -240,8 +242,8 @@ const SolarSystem = () => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
       const orbitSpeed = systemData[p + "OrbitSpeed"];
-      pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
-      pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      // pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      // pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
     });
 
     starsRef.current.rotation.y += delta * 0.025;
@@ -261,17 +263,7 @@ const SolarSystem = () => {
               ref={sunRef}
               position={getPosition("sun")}
               scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
-            >
-              {/* <Billboard>
-                <Circle
-                  args={[1.05, 128]}
-                  position={getPosition("sun")}
-                  scale={[systemData.sunScale, systemData.sunScale, systemData.sunScale]}
-                >
-                  <meshStandardMaterial color='#ffd682' />
-                </Circle>
-              </Billboard> */}
-            </Planet>
+            />
 
             {planets.map(planet => {
               return (
@@ -294,6 +286,8 @@ const SolarSystem = () => {
                       rotation={[-Math.PI * 0.5, 0, 0]}
                       position={[0, 0.01, 0]}
                       scale={[4, 4, 4]}
+                      uBaseColor={systemData.satRingColor}
+                      uBloomIntensity={systemData.satRingBloomIntensity}
                       uRadiusInner={0.3}
                     />
                   )}
@@ -360,8 +354,14 @@ const SolarSystem = () => {
  * PlanetRings
  */
 
-const PlanetRings = forwardRef(({ uRadiusInner, ...props }, ref) => {
+const PlanetRings = forwardRef(({ uBaseColor, uBloomIntensity, uRadiusInner, ...props }, ref) => {
   const materialRef = useRef();
+
+  const materialConfig = useControls("PlanetRings", {
+    uFadePower: 3,
+    uMult1: 17.3,
+    uMult2: 34,
+  });
 
   useFrame(({ clock }) => {
     materialRef.current.uniforms.uTime.value = clock.elapsedTime;
@@ -369,7 +369,16 @@ const PlanetRings = forwardRef(({ uRadiusInner, ...props }, ref) => {
 
   return (
     <Plane renderOrder={1} ref={ref} {...props}>
-      <planetRingsMaterial ref={materialRef} key={PlanetRingsMaterial.key} uRadiusInner={uRadiusInner} />
+      <planetRingsMaterial
+        ref={materialRef}
+        key={PlanetRingsMaterial.key}
+        uBaseColor={uBaseColor}
+        uFadePower={materialConfig.uFadePower}
+        uMult1={materialConfig.uMult1}
+        uMult2={materialConfig.uMult2}
+        uBloomIntensity={uBloomIntensity}
+        uRadiusInner={uRadiusInner}
+      />
     </Plane>
   );
 });
