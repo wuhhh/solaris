@@ -2,7 +2,7 @@ html,
 body,
 #root {
   @apply w-full h-full select-none overflow-hidden;
-  background-color: #160b26;
+  background-color: #130c18;
   -webkit-touch-callout: none;
 }
 
@@ -17,4 +17,3 @@ body {
 .logomark {
   @apply absolute bottom-[26px] left-[26px] w-[26px] h-[26px];
 }
-

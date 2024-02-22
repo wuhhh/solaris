@@ -16,8 +16,23 @@ export default function UI(props) {
         <button onClick={() => handleClick("default")} className={`${preset === "default" ? "text-orange-400" : ""} pointer-events-auto`}>
           default
         </button>
-        <button onClick={() => handleClick("near")} className={`${preset === "near" ? "text-orange-400" : ""} pointer-events-auto`}>
-          near
+        <button onClick={() => handleClick("dynamic1")} className={`${preset === "dynamic1" ? "text-orange-400" : ""} pointer-events-auto`}>
+          dyn1
+        </button>
+        <button onClick={() => handleClick("dynamic2")} className={`${preset === "dynamic2" ? "text-orange-400" : ""} pointer-events-auto`}>
+          dyn2
+        </button>
+        <button onClick={() => handleClick("dynamic3")} className={`${preset === "dynamic3" ? "text-orange-400" : ""} pointer-events-auto`}>
+          dyn3
+        </button>
+        <button onClick={() => handleClick("dynamic4")} className={`${preset === "dynamic4" ? "text-orange-400" : ""} pointer-events-auto`}>
+          dyn4
+        </button>
+        <button onClick={() => handleClick("close1")} className={`${preset === "close1" ? "text-orange-400" : ""} pointer-events-auto`}>
+          cl1
+        </button>
+        <button onClick={() => handleClick("close2")} className={`${preset === "close2" ? "text-orange-400" : ""} pointer-events-auto`}>
+          cl2
         </button>
         <button onClick={() => handleClick("top")} className={`${preset === "top" ? "text-orange-400" : ""} pointer-events-auto`}>
           top

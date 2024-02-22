@@ -240,7 +240,7 @@ const SolarSystem = () => {
     c
   );
 
-  useFrame(({ clock }, delta) => {
+  useFrame(({ clock, pointer }, delta) => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
       const orbitSpeed = systemData[p + "OrbitSpeed"];
@@ -298,6 +298,13 @@ const SolarSystem = () => {
               );
             })}
 
+            <Instances ref={spacerockInstsRef} geometry={spacerockGeometry()}>
+              <meshStandardMaterial color={new THREE.Color(0x130c18)} roughness={0.9} metalness={0} />
+              {data.map((props, i) => (
+                <Spacerock key={i} {...props} scale={[0.05, 0.05, 0.05]} />
+              ))}
+            </Instances>
+
             {systemData.genAmbientLightEnabled && <ambientLight intensity={systemData.genAmbientLightIntensity} />}
             {systemData.genDirLightEnabled && (
               <directionalLight
@@ -353,13 +360,6 @@ const SolarSystem = () => {
           />
         )}
       </Clouds>
-
-      <Instances ref={spacerockInstsRef} geometry={spacerockGeometry()}>
-        <meshStandardMaterial color={new THREE.Color(0x130c18)} roughness={0.9} metalness={0} />
-        {data.map((props, i) => (
-          <Spacerock key={i} {...props} scale={[0.05, 0.05, 0.05]} />
-        ))}
-      </Instances>
     </>
   );
 };
@@ -433,10 +433,14 @@ const PlanetRings = forwardRef(({ uBaseColor, uBloomIntensity, uRadiusInner, ...
  */
 
 const Views = () => {
-  const { preset, presetIsTransitioning, setPresetIsTransitioning, solarSystemRef } = useStore();
+  const { preset, setPresetIsTransitioning, solarSystemRef } = useStore();
   const { camera } = useThree();
   const onStart = () => setPresetIsTransitioning(true);
   const onComplete = () => setPresetIsTransitioning(false);
+
+  /* useFrame(() => {
+    console.log(camera.position);
+  }); */
 
   useGSAP(() => {
     if (solarSystemRef === null) return;
@@ -450,7 +454,7 @@ const Views = () => {
         y: 3,
         z: 11,
         ease: "power1.inOut",
-        onStart,
+        // onStart,
         onComplete,
         onUpdate: () => {
           camera.lookAt(0, 0, 0);
@@ -460,7 +464,7 @@ const Views = () => {
       gsap.to(solarSystemRef.rotation, {
         duration: 5,
         x: 0,
-        y: -2.3,
+        y: -4.6,
         z: 0,
         ease: "power1.inOut",
       });
@@ -474,9 +478,9 @@ const Views = () => {
       });
     }
 
-    // View : Near
+    // View : Dynamic 1
 
-    if (preset === "near") {
+    if (preset === "dynamic1") {
       gsap.to(camera.position, {
         duration: 5,
         x: 0,
@@ -507,13 +511,145 @@ const Views = () => {
       });
     }
 
-    // View : Top
+    // View : Dynamic 2
 
-    if (preset === "top") {
+    if (preset === "dynamic2") {
       gsap.to(camera.position, {
         duration: 5,
+        x: -3,
+        y: 2,
+        z: 8,
+        ease: "power1.inOut",
+        // onStart,
+        onComplete,
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+        },
+      });
+
+      gsap.to(solarSystemRef.rotation, {
+        duration: 5,
+        x: 0.26,
+        y: -2.3,
+        z: 0.1,
+        ease: "power1.inOut",
+      });
+
+      gsap.to(solarSystemRef.position, {
+        duration: 5,
+        x: 2.1,
+        y: -0.3,
+        z: -2,
+        ease: "power1.inOut",
+      });
+    }
+
+    // View : Dynamic 3
+
+    if (preset === "dynamic3") {
+      gsap.to(camera.position, {
+        duration: 5,
+        x: 16,
+        y: 1.3,
+        z: 1.5,
+        ease: "power1.inOut",
+        // onStart,
+        onComplete,
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+        },
+      });
+
+      gsap.to(solarSystemRef.rotation, {
+        duration: 5,
+        x: 0.26,
+        y: -2.3,
+        z: 0.1,
+        ease: "power1.inOut",
+      });
+
+      gsap.to(solarSystemRef.position, {
+        duration: 5,
+        x: 2.1,
+        y: -0.3,
+        z: -2,
+        ease: "power1.inOut",
+      });
+    }
+
+    // View : Dynamic 4
+
+    if (preset === "dynamic4") {
+      gsap.to(camera.position, {
+        duration: 5,
+        x: 9,
+        y: 3,
+        z: 6.7,
+        ease: "power1.inOut",
+        // onStart,
+        onComplete,
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+        },
+      });
+
+      gsap.to(solarSystemRef.rotation, {
+        duration: 5,
+        x: 0.26,
+        y: -2.3,
+        z: 0.1,
+        ease: "power1.inOut",
+      });
+
+      gsap.to(solarSystemRef.position, {
+        duration: 5,
         x: 0,
-        y: 28,
+        y: -0.3,
+        z: -2,
+        ease: "power1.inOut",
+      });
+    }
+
+    // View : Close 1
+
+    if (preset === "close1") {
+      gsap.to(camera.position, {
+        duration: 5,
+        x: -0.25,
+        y: -1,
+        z: 6,
+        ease: "power1.inOut",
+        // onStart,
+        onComplete,
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+        },
+      });
+
+      gsap.to(solarSystemRef.rotation, {
+        duration: 5,
+        x: 0.5,
+        y: -2.3,
+        z: 0.1,
+        ease: "power1.inOut",
+      });
+
+      gsap.to(solarSystemRef.position, {
+        duration: 5,
+        x: 2.1,
+        y: 0,
+        z: -2,
+        ease: "power1.inOut",
+      });
+    }
+
+    // View : Close 2
+
+    if (preset === "close2") {
+      gsap.to(camera.position, {
+        duration: 5,
+        x: -6,
+        y: 1,
         z: 0,
         ease: "power1.inOut",
         // onStart,
@@ -525,8 +661,41 @@ const Views = () => {
 
       gsap.to(solarSystemRef.rotation, {
         duration: 5,
+        x: 0.2,
+        y: 0.7,
+        z: 0.1,
+        ease: "power1.inOut",
+      });
+
+      gsap.to(solarSystemRef.position, {
+        duration: 5,
+        x: 2,
+        y: 0.2,
+        z: -1.8,
+        ease: "power1.inOut",
+      });
+    }
+
+    // View : Top
+
+    if (preset === "top") {
+      gsap.to(camera.position, {
+        duration: 5,
         x: 0,
-        y: -2.3,
+        y: 0,
+        z: 20,
+        ease: "power1.inOut",
+        // onStart,
+        onComplete,
+        onUpdate: () => {
+          camera.lookAt(0, 0, 0);
+        },
+      });
+
+      gsap.to(solarSystemRef.rotation, {
+        duration: 5,
+        x: Math.PI * 0.5,
+        y: 0,
         z: 0,
         ease: "power1.inOut",
       });
@@ -650,6 +819,21 @@ const Planet = forwardRef(({ prefix, config, ...props }, ref) => {
 });
 
 /**
+ * Scene
+ */
+
+const Scene = () => {
+  return (
+    <>
+      {/* <WrappedOrbitControls /> */}
+      <SolarSystem />
+      <Effects />
+      <Views />
+    </>
+  );
+};
+
+/**
  * App
  */
 
@@ -667,10 +851,7 @@ const App = () => {
           depth: false,
         }}
       >
-        <WrappedOrbitControls />
-        <SolarSystem />
-        <Effects />
-        <Views />
+        <Scene />
       </Canvas>
       <UI />
     </>
