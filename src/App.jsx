@@ -1,7 +1,7 @@
-import React, { forwardRef, useEffect, useRef, useState } from "react";
+import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Cloud, Clouds, Float, Instances, Instance, OrbitControls, Plane, Sphere, Stars } from "@react-three/drei";
+import { Cloud, Clouds, Float, Instances, Instance, OrbitControls, Plane, Sphere, Stars, PositionalAudio } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, EffectComposer, Noise, TiltShift2, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
@@ -22,9 +22,13 @@ import { data } from "./stores/spacerockData";
 
 const SolarSystem = () => {
   const setSolarSystemRef = useStore(state => state.setSolarSystemRef);
+  const { experienceStarted } = useStore();
   const { width } = useThree(state => state.viewport);
-  // const randomStart = 1;
-  const randomStart = Math.random() * 1000;
+  const [randomStart] = useMemo(() => {
+    // const randomStart = 1;
+    const randomStart = Math.random() * 1000;
+    return [randomStart];
+  }, []);
   const c = { collapsed: true };
   const sunRef = useRef();
   const planetsRef = useRef({});
@@ -32,6 +36,11 @@ const SolarSystem = () => {
   const starsRef = useRef();
   const saturnRingsRef = useRef();
   const spacerockInstsRef = useRef();
+
+  const audioListener = new THREE.AudioListener();
+  const audioContext = audioListener.context;
+
+  console.log(audioContext, audioListener);
 
   // Assign a ref to each planet
   const assignPlanetRef = planet => ref => {
@@ -147,6 +156,7 @@ const SolarSystem = () => {
           jupScale: 0.1,
           // jupColor: "#ff6900",
           jupOrbitSpeed: 0.3,
+          jupSound: "/sounds/outside.ogg",
           ...getPlanetControls("jup"),
         },
         c
@@ -156,6 +166,7 @@ const SolarSystem = () => {
           satScale: 0.07,
           // satColor: "#8d89e2",
           satOrbitSpeed: 0.2,
+          satSound: "/sounds/tape.ogg",
           satRingColor: "#e6a97e",
           satRingBloomIntensity: 4,
           ...getPlanetControls("sat"),
@@ -293,6 +304,9 @@ const SolarSystem = () => {
                       uBloomIntensity={systemData.satRingBloomIntensity}
                       uRadiusInner={0.3}
                     />
+                  )}
+                  {systemData[planet + "Sound"] && experienceStarted && (
+                    <PositionalAudio autoplay url={systemData[planet + "Sound"]} distance={1} loop />
                   )}
                 </Planet>
               );
@@ -840,7 +854,7 @@ const Scene = () => {
 const App = () => {
   return (
     <>
-      <Leva collapsed oneLineLabels />
+      <Leva hidden collapsed oneLineLabels />
       <Canvas
         camera={{ fov: 35, position: [0, 3, 11] }}
         gl={{
