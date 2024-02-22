@@ -355,7 +355,7 @@ const SolarSystem = () => {
       </Clouds>
 
       <Instances ref={spacerockInstsRef} geometry={spacerockGeometry()}>
-        <meshStandardMaterial color={new THREE.Color(0x130c18)} roughness={0.8} metalness={0} />
+        <meshStandardMaterial color={new THREE.Color(0x130c18)} roughness={0.9} metalness={0} />
         {data.map((props, i) => (
           <Spacerock key={i} {...props} scale={[0.05, 0.05, 0.05]} />
         ))}
@@ -447,8 +447,8 @@ const Views = () => {
       gsap.to(camera.position, {
         duration: 5,
         x: 0,
-        y: 8,
-        z: 36,
+        y: 3,
+        z: 11,
         ease: "power1.inOut",
         onStart,
         onComplete,
@@ -658,7 +658,7 @@ const App = () => {
     <>
       <Leva collapsed oneLineLabels />
       <Canvas
-        camera={{ fov: 35, position: [0, 8, 36] }}
+        camera={{ fov: 35, position: [0, 3, 11] }}
         gl={{
           powerPreference: "high-performance",
           alpha: false,
