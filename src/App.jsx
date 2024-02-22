@@ -1,7 +1,7 @@
-import React, { forwardRef, useEffect, useRef } from "react";
+import React, { forwardRef, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Billboard, Circle, Cloud, Clouds, Float, OrbitControls, Plane, Ring, Sphere, Stars } from "@react-three/drei";
+import { Billboard, Circle, Cloud, Clouds, Float, Instances, Instance, OrbitControls, Plane, Ring, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, EffectComposer, Noise, TiltShift2, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
@@ -13,7 +13,9 @@ import { getPlanetConfig, getPlanetControls } from "./PlanetMaterialConfig";
 import UI from "./UI";
 import "./PlanetMaterial";
 import PlanetRingsMaterial from "./PlanetRingsMaterial";
+import { spacerockGeometry } from "./Spacerock";
 import useStore from "./stores/useStore";
+import { data } from "./stores/spacerockData";
 
 /**
  * Solar System
@@ -30,6 +32,7 @@ const SolarSystem = () => {
   const planets = ["mer", "ven", "ear", "mar", "jup", "sat", "ura", "nep"];
   const starsRef = useRef();
   const saturnRingsRef = useRef();
+  const spacerockInstsRef = useRef();
 
   // Assign a ref to each planet
   const assignPlanetRef = planet => ref => {
@@ -92,7 +95,7 @@ const SolarSystem = () => {
           genAmbientLightIntensity: 8,
           genPointLightEnabled: true,
           genPointLightIntensity: 60,
-          genPointLightColor: "#08c7ff",
+          genPointLightColor: "#ff9c08",
         },
         c
       ),
@@ -247,6 +250,7 @@ const SolarSystem = () => {
     });
 
     starsRef.current.rotation.y += delta * 0.025;
+    spacerockInstsRef.current.rotation.y += delta * 0.05;
   });
 
   return (
@@ -297,7 +301,11 @@ const SolarSystem = () => {
 
             {systemData.genAmbientLightEnabled && <ambientLight intensity={systemData.genAmbientLightIntensity} />}
             {systemData.genDirLightEnabled && (
-              <directionalLight intensity={systemData.genDirLightIntensity} position={systemData.genDirLightPosition} />
+              <directionalLight
+                intensity={systemData.genDirLightIntensity}
+                position={systemData.genDirLightPosition}
+                color={systemData.genDirLightColor}
+              />
             )}
             {systemData.genPointLightEnabled && (
               <pointLight
@@ -346,7 +354,32 @@ const SolarSystem = () => {
           />
         )}
       </Clouds>
+
+      <Instances ref={spacerockInstsRef} geometry={spacerockGeometry()}>
+        <meshStandardMaterial color={new THREE.Color(0x130c18)} roughness={0.8} metalness={0} />
+        {data.map((props, i) => (
+          <Spacerock key={i} {...props} scale={[0.05, 0.05, 0.05]} />
+        ))}
+      </Instances>
     </>
+  );
+};
+
+/**
+ * Spacerock instance
+ */
+
+const Spacerock = ({ random, color = new THREE.Color(), ...props }) => {
+  const ref = useRef();
+  useFrame(state => {
+    const t = state.clock.getElapsedTime() + random * 10000;
+    ref.current.rotation.set(Math.cos(t / 2) / 2, Math.sin(t / 2) / 2, Math.cos(t / 1.5) / 2);
+    ref.current.position.y = Math.sin(t / 1.5) / 2;
+  });
+  return (
+    <group {...props}>
+      <Instance ref={ref} />
+    </group>
   );
 };
 
@@ -362,7 +395,7 @@ const PlanetRings = forwardRef(({ uBaseColor, uBloomIntensity, uRadiusInner, ...
   const materialConfig = useControls(
     "PlanetRings",
     {
-      uFadePower: 3,
+      uFadePower: 2,
       uMult1: 17.3,
       uMult2: 34,
     },
@@ -531,8 +564,8 @@ const Effects = () => {
       glitchDuration: [0.6, 1.0],
       glitchStrength: [0.3, 1.0],
       glitchRatio: 0.85,
-      noise: false,
-      noiseIntensity: 0.12,
+      noise: true,
+      noiseIntensity: 0.05,
       tiltShift: false,
       tiltShiftBlur: 0.15, // [0, 1], can go beyond 1 for extra
       tiltShiftTaper: 0.5, // [0, 1], can go beyond 1 for extra

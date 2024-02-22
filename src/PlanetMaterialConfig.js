@@ -26,7 +26,7 @@ const configs = {
       max: 100,
       step: 1,
     },
-    uSpinX: 0.5,
+    uSpinX: -1,
     uSpinY: 0,
     uSeedAtmos: {
       value: 0,
@@ -34,7 +34,7 @@ const configs = {
       max: 100,
       step: 1,
     },
-    uSpinAtmosX: -0.5,
+    uSpinAtmosX: 1,
     uSpinAtmosY: 0,
     uStop1: 0,
     uStop2: 0.4,
