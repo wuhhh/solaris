@@ -1,14 +1,12 @@
 import React, { forwardRef, useEffect, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Billboard, Circle, Cloud, Clouds, Float, Instances, Instance, OrbitControls, Plane, Ring, Sphere, Stars } from "@react-three/drei";
+import { Cloud, Clouds, Float, Instances, Instance, OrbitControls, Plane, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, EffectComposer, Noise, TiltShift2, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { GridRing } from "./GridRing";
-import DustRing from "./Bubbles";
-// import { MyCustomEffect } from "./CustomEffect";
 import { getPlanetConfig, getPlanetControls } from "./PlanetMaterialConfig";
 import UI from "./UI";
 import "./PlanetMaterial";
@@ -16,6 +14,7 @@ import PlanetRingsMaterial from "./PlanetRingsMaterial";
 import { spacerockGeometry } from "./Spacerock";
 import useStore from "./stores/useStore";
 import { data } from "./stores/spacerockData";
+// import { MyCustomEffect } from "./CustomEffect";
 
 /**
  * Solar System
@@ -557,6 +556,10 @@ const Effects = () => {
       bloomOpacity: 1.1,
       bloomThreshold: 1.0,
       bloomSmoothing: 1.4,
+      fog: false,
+      fogColor: "#000000",
+      fogNear: 0,
+      fogFar: 30,
       glitch: false,
       glitchColumns: 0.05,
       glitchDelay: [1.5, 3.5],
@@ -581,30 +584,33 @@ const Effects = () => {
   );
 
   return (
-    <EffectComposer multisampling={0} disableNormalPass={true}>
-      {postConfig.bloom && (
-        <Bloom
-          mipmapBlur={postConfig.bloomMipmapBlur}
-          intensity={postConfig.bloomIntensity}
-          luminanceThreshold={postConfig.bloomThreshold}
-          luminanceSmoothing={postConfig.bloomSmoothing}
-          height={1024}
-          opacity={postConfig.bloomOpacity}
-        />
-      )}
-      {postConfig.noise && <Noise opacity={postConfig.noiseIntensity} />}
-      {postConfig.vignette && <Vignette eskil={false} offset={postConfig.vignetteOffset} darkness={postConfig.vignetteDarkness} />}
-      {postConfig.tiltShift && (
-        <TiltShift2
-          blur={postConfig.tiltShiftBlur}
-          taper={postConfig.tiltShiftTaper}
-          start={postConfig.tileShiftStart}
-          end={postConfig.tileShiftEnd}
-          samples={postConfig.tileShiftSamples}
-          direction={postConfig.tileShiftDirection}
-        />
-      )}
-    </EffectComposer>
+    <>
+      <EffectComposer multisampling={0} disableNormalPass={true}>
+        {postConfig.bloom && (
+          <Bloom
+            mipmapBlur={postConfig.bloomMipmapBlur}
+            intensity={postConfig.bloomIntensity}
+            luminanceThreshold={postConfig.bloomThreshold}
+            luminanceSmoothing={postConfig.bloomSmoothing}
+            height={1024}
+            opacity={postConfig.bloomOpacity}
+          />
+        )}
+        {postConfig.noise && <Noise opacity={postConfig.noiseIntensity} />}
+        {postConfig.vignette && <Vignette eskil={false} offset={postConfig.vignetteOffset} darkness={postConfig.vignetteDarkness} />}
+        {postConfig.tiltShift && (
+          <TiltShift2
+            blur={postConfig.tiltShiftBlur}
+            taper={postConfig.tiltShiftTaper}
+            start={postConfig.tileShiftStart}
+            end={postConfig.tileShiftEnd}
+            samples={postConfig.tileShiftSamples}
+            direction={postConfig.tileShiftDirection}
+          />
+        )}
+      </EffectComposer>
+      {postConfig.fog && <fog attach='fog' args={[postConfig.fogColor, postConfig.fogNear, postConfig.fogFar]} />}
+    </>
   );
 };
 
