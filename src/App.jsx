@@ -37,11 +37,6 @@ const SolarSystem = () => {
   const saturnRingsRef = useRef();
   const spacerockInstsRef = useRef();
 
-  const audioListener = new THREE.AudioListener();
-  const audioContext = audioListener.context;
-
-  console.log(audioContext, audioListener);
-
   // Assign a ref to each planet
   const assignPlanetRef = planet => ref => {
     planetsRef.current[planet] = ref;
@@ -306,7 +301,7 @@ const SolarSystem = () => {
                     />
                   )}
                   {systemData[planet + "Sound"] && experienceStarted && (
-                    <PositionalAudio autoplay url={systemData[planet + "Sound"]} distance={1} loop />
+                    <PlanetAudio autoplay url={systemData[planet + "Sound"]} distance={1} loop />
                   )}
                 </Planet>
               );
@@ -376,6 +371,38 @@ const SolarSystem = () => {
       </Clouds>
     </>
   );
+};
+
+/**
+ * Planet Audio
+ */
+
+const PlanetAudio = props => {
+  const soundRef = useRef();
+  const v = useStore();
+  const { targetVolume, setVolume } = useStore();
+
+  useEffect(() => {
+    soundRef.current.setVolume(0);
+  }, []);
+
+  useGSAP(() => {
+    gsap.to(v, {
+      duration: 4,
+      volume: targetVolume,
+      onComplete: () => {
+        setVolume(targetVolume);
+      },
+      onUpdate: () => {
+        console.log(v.volume);
+        if (soundRef.current) {
+          soundRef.current.setVolume(v.volume);
+        }
+      },
+    });
+  }, [targetVolume]);
+
+  return <PositionalAudio ref={soundRef} {...props} />;
 };
 
 /**

@@ -3,8 +3,10 @@ import useStore from "./stores/useStore";
 export default function UI(props) {
   const { preset, setPreset, presetIsTransitioning, setPresetIsTransitioning } = useStore();
   const { experienceStarted, setExperienceStarted } = useStore();
+  const { setTargetVolume } = useStore();
 
   const startExperience = () => {
+    setTargetVolume(1);
     setExperienceStarted(true);
   };
 
@@ -53,6 +55,15 @@ export default function UI(props) {
         </button>
         <button onClick={() => changePreset("top")} className={`${preset === "top" ? "text-orange-400" : ""} pointer-events-auto`}>
           top
+        </button>
+        <button onClick={() => setTargetVolume(0)} className='pointer-events-auto'>
+          Vol 0
+        </button>
+        <button onClick={() => setTargetVolume(0.5)} className='pointer-events-auto'>
+          Vol 0.5
+        </button>
+        <button onClick={() => setTargetVolume(1)} className='pointer-events-auto'>
+          Vol 1
         </button>
       </div>
 
