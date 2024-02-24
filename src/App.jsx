@@ -931,7 +931,7 @@ const WrappedOrbitControls = () => {
     orbitControlsRef.current.enable = !presetIsTransitioning;
   }, [presetIsTransitioning]);
 
-  return <OrbitControls ref={orbitControlsRef} enablePan={true} enableZoom={true} />;
+  return <OrbitControls ref={orbitControlsRef} enablePan={false} enableZoom={false} />;
 };
 
 /**
