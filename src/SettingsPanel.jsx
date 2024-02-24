@@ -34,7 +34,7 @@ export default function SettingsPanel(props) {
           <Button preset='dynamic4'>Dynamic 4</Button>
           <Button preset='close1'>Close 1</Button>
           <Button preset='close2'>Close 2</Button>
-          <Button preset='above'>Above</Button>
+          <Button preset='top'>Above</Button>
         </div>
       </div>
     </div>
