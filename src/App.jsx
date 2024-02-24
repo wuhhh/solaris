@@ -100,9 +100,11 @@ const SolarSystem = () => {
           genPointLightEnabled: true,
           genPointLightIntensity: 60,
           genPointLightColor: "#ff9d0a",
-          genSpaceRockColor: "#8e63ff",
-          genSpaceRoughness: 0.64,
-          genSpaceMetalness: 0.5,
+          genSpacerockColor: "#8e63ff",
+          genSpacerockRoughness: 1,
+          genSpacerockMetalness: 0,
+          genSpacerockEmmissive: "#ff9d0a",
+          genSpacerockEmmissiveIntensity: 0,
         },
         c
       ),
@@ -357,12 +359,14 @@ const SolarSystem = () => {
 
             <Instances ref={spacerockInstsRef} geometry={spacerockGeometry()}>
               <meshStandardMaterial
-                color={systemData.genSpaceRockColor}
-                roughness={systemData.genSpaceRoughness}
-                metalness={systemData.genSpaceMetalness}
+                color={systemData.genSpacerockColor}
+                roughness={systemData.genSpacerockRoughness}
+                metalness={systemData.genSpacerockMetalness}
+                emissive={systemData.genSpacerockEmmissive}
+                emissiveIntensity={systemData.genSpacerockEmmissiveIntensity}
               />
               {data.map((props, i) => (
-                <Spacerock key={i} {...props} scale={[0.05, 0.05, 0.05]} />
+                <Spacerock key={i} {...props} />
               ))}
             </Instances>
 
@@ -502,9 +506,9 @@ const PlanetAudio = props => {
 const Spacerock = ({ random, color = new THREE.Color(), ...props }) => {
   const ref = useRef();
   useFrame(state => {
-    const t = state.clock.getElapsedTime() + random * 10000;
+    const t = state.clock.getElapsedTime() + random;
     ref.current.rotation.set(Math.cos(t / 2) / 2, Math.sin(t / 2) / 2, Math.cos(t / 1.5) / 2);
-    ref.current.position.y = Math.sin(t / 1.5) / 2;
+    ref.current.position.y = Math.sin(t * 0.1) * 0.1;
   });
   return (
     <group {...props}>
@@ -869,13 +873,13 @@ const Effects = () => {
       glitchRatio: 0.85,
       noise: false,
       noiseIntensity: 0.05,
-      tiltShift: false,
-      tiltShiftBlur: 0.15, // [0, 1], can go beyond 1 for extra
+      tiltShift: true,
+      tiltShiftBlur: 0.05, // [0, 1], can go beyond 1 for extra
       tiltShiftTaper: 0.5, // [0, 1], can go beyond 1 for extra
       tileShiftStart: [0.5, 0], // [0,1] percentage x,y of screenspace
       tileShiftEnd: [0.5, 1], // [0,1] percentage x,y of screenspace
       tileShiftSamples: 10, // number of blur samples
-      tileShiftDirection: [1, 1], // direction of blur
+      tileShiftDirection: [1, 0], // direction of blur
       vignette: true,
       vignetteOffset: 0,
       vignetteDarkness: 1.1,
@@ -927,7 +931,7 @@ const WrappedOrbitControls = () => {
     orbitControlsRef.current.enable = !presetIsTransitioning;
   }, [presetIsTransitioning]);
 
-  return <OrbitControls ref={orbitControlsRef} enablePan={true} enableZoom={false} />;
+  return <OrbitControls ref={orbitControlsRef} enablePan={true} enableZoom={true} />;
 };
 
 /**

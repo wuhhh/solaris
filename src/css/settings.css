@@ -1,0 +1,23 @@
+.settings {
+  @apply bg-almost-black/85 backdrop-blur-lg text-cloud-pink border border-cloud-pink rounded-sm p-6 transition-opacity duration-300 pointer-events-none opacity-0;
+
+  &.-show {
+    @apply pointer-events-auto opacity-100;
+  }
+
+  .settings__heading {
+    @apply text-base font-bold pb-4 border-b border-b-cloud-pink border-dashed mb-4;
+  }
+
+  button {
+    @apply bg-transparent rounded-sm border border-cloud-pink px-[11px] py-[9px] text-cloud-pink text-sm text-left hover:bg-cloud-pink hover:text-almost-black transition duration-300;
+  }
+
+  button.-active {
+    @apply bg-cloud-pink text-almost-black;
+  }
+
+  button:disabled:not(.-active) {
+    @apply opacity-50;
+  }
+}
