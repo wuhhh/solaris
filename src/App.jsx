@@ -867,7 +867,7 @@ const Effects = () => {
       glitchDuration: [0.6, 1.0],
       glitchStrength: [0.3, 1.0],
       glitchRatio: 0.85,
-      noise: true,
+      noise: false,
       noiseIntensity: 0.05,
       tiltShift: false,
       tiltShiftBlur: 0.15, // [0, 1], can go beyond 1 for extra
@@ -927,7 +927,7 @@ const WrappedOrbitControls = () => {
     orbitControlsRef.current.enable = !presetIsTransitioning;
   }, [presetIsTransitioning]);
 
-  return <OrbitControls ref={orbitControlsRef} enablePan={true} />;
+  return <OrbitControls ref={orbitControlsRef} enablePan={true} enableZoom={false} />;
 };
 
 /**
