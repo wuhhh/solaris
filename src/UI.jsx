@@ -8,6 +8,7 @@ export default function UI(props) {
   const startExperience = () => {
     setTargetVolume(1);
     setExperienceStarted(true);
+    // setPreset("default");
   };
 
   const changePreset = preset => {

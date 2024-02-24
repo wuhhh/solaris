@@ -300,9 +300,7 @@ const SolarSystem = () => {
                       uRadiusInner={0.3}
                     />
                   )}
-                  {systemData[planet + "Sound"] && experienceStarted && (
-                    <PlanetAudio autoplay url={systemData[planet + "Sound"]} distance={1} loop />
-                  )}
+                  {systemData[planet + "Sound"] && <PlanetAudio url={systemData[planet + "Sound"]} distance={1} loop />}
                 </Planet>
               );
             })}
@@ -380,12 +378,21 @@ const SolarSystem = () => {
 const PlanetAudio = props => {
   const soundRef = useRef();
   const v = useStore();
-  const { targetVolume, setVolume } = useStore();
+  const { experienceStarted, targetVolume, setVolume } = useStore();
 
+  // Set the volume to 0 when the component mounts
   useEffect(() => {
     soundRef.current.setVolume(0);
   }, []);
 
+  // Start the sound when the experience starts
+  useEffect(() => {
+    if (experienceStarted) {
+      soundRef.current.play();
+    }
+  }, [experienceStarted]);
+
+  // Watch targetVolume and tween the volume to it when it changes
   useGSAP(() => {
     gsap.to(v, {
       duration: 4,
@@ -394,7 +401,6 @@ const PlanetAudio = props => {
         setVolume(targetVolume);
       },
       onUpdate: () => {
-        console.log(v.volume);
         if (soundRef.current) {
           soundRef.current.setVolume(v.volume);
         }
