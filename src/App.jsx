@@ -36,6 +36,7 @@ const SolarSystem = () => {
   const starsRef = useRef();
   const saturnRingsRef = useRef();
   const spacerockInstsRef = useRef();
+  const cloudsRef = useRef();
 
   // Assign a ref to each planet
   const assignPlanetRef = planet => ref => {
@@ -53,11 +54,11 @@ const SolarSystem = () => {
       cellColor: "#1e3d76",
       sectionSize: { value: 1.2, min: 0, max: 10, step: 0.1 },
       sectionThickness: { value: 3, min: 0, max: 100, step: 0.1 },
-      sectionColor: "#3e286c",
-      // sectionColor: "#ff9d58",
+      sectionColor: "#fc9c9c",
+      // sectionColor: "#3e286c",
       circleGridMaxRadius: { value: 19, min: 1, max: 100, step: 1 },
       fadeDistance: { value: 20, min: 0, max: 100, step: 1 },
-      fadeStrength: { value: 1, min: 0, max: 10, step: 0.1 },
+      fadeStrength: { value: 10, min: 0, max: 10, step: 0.1 },
       followCamera: false,
       infiniteGrid: true,
     },
@@ -95,10 +96,13 @@ const SolarSystem = () => {
           genDirLightPosition: [0, 2, 8],
           genDirLightColor: "#ffffff",
           genAmbientLightEnabled: true,
-          genAmbientLightIntensity: 8,
+          genAmbientLightIntensity: 0.3,
           genPointLightEnabled: true,
           genPointLightIntensity: 60,
-          genPointLightColor: "#ff9c08",
+          genPointLightColor: "#ff9d0a",
+          genSpaceRockColor: "#8e63ff",
+          genSpaceRoughness: 0.64,
+          genSpaceMetalness: 0.5,
         },
         c
       ),
@@ -188,57 +192,102 @@ const SolarSystem = () => {
       ),
       clouds: folder(
         {
+          /* Cloud 1 */
           cloud1Visible: true,
-          cloud1Seed: 2001,
-          cloud1Bounds: [-200, 0.1, -10],
+          cloud1Seed: 1986,
+          cloud1Bounds: [-200, 120, -200],
           cloud1Segments: {
-            value: 69,
+            value: 100,
             min: 1,
             max: 1000,
             step: 1,
           },
           cloud1Volume: {
-            value: 40,
+            value: 200,
             min: 1,
-            max: 100,
+            max: 500,
             step: 1,
           },
-          // cloud1Color: "#c9c9c9",
-          cloud1Color: "#c11313",
+          cloud1Color: "#1380c2",
           cloud1Fade: {
-            value: 145000,
+            value: 70500,
             min: 1,
             max: 500000,
             step: 500,
           },
-          cloud1Position: [0, -15, -100],
+          cloud1Position: [0, -15, -200],
+          /* Cloud 2 */
           cloud2Visible: true,
           cloud2Seed: 1984,
-          cloud2Bounds: [-100, -100, -100],
+          cloud2Bounds: [-200, 120, -200],
           cloud2Segments: {
-            // value: 200,
-            value: 124,
+            value: 100,
             min: 1,
             max: 1000,
             step: 1,
           },
           cloud2Volume: {
-            // value: 66,
-            value: 67,
+            value: 200,
             min: 1,
-            max: 100,
+            max: 500,
             step: 1,
           },
-          // cloud2Color: "#585858",
-          cloud2Color: "#6169b1",
+          cloud2Color: "#7f61b0",
           cloud2Fade: {
-            // value: 36500,
-            value: 30000,
+            value: 70500,
             min: 1,
             max: 500000,
             step: 500,
           },
-          cloud2Position: [-5, -42, -50],
+          cloud2Position: [200, -15, -10],
+          /* Cloud 3 */
+          cloud3Visible: true,
+          cloud3Seed: 1986,
+          cloud3Bounds: [-200, 120, -200],
+          cloud3Segments: {
+            value: 100,
+            min: 1,
+            max: 1000,
+            step: 1,
+          },
+          cloud3Volume: {
+            value: 200,
+            min: 1,
+            max: 500,
+            step: 1,
+          },
+          cloud3Color: "#28b993",
+          cloud3Fade: {
+            value: 70500,
+            min: 1,
+            max: 500000,
+            step: 500,
+          },
+          cloud3Position: [0, -15, 200],
+          /* Cloud 4 */
+          cloud4Visible: true,
+          cloud4Seed: 1984,
+          cloud4Bounds: [-200, 120, -200],
+          cloud4Segments: {
+            value: 100,
+            min: 1,
+            max: 1000,
+            step: 1,
+          },
+          cloud4Volume: {
+            value: 200,
+            min: 1,
+            max: 500,
+            step: 1,
+          },
+          cloud4Color: "#6791c7",
+          cloud4Fade: {
+            value: 70500,
+            min: 1,
+            max: 500000,
+            step: 500,
+          },
+          cloud4Position: [-200, -15, -10],
         },
         c
       ),
@@ -246,16 +295,17 @@ const SolarSystem = () => {
     c
   );
 
-  useFrame(({ clock, pointer }, delta) => {
+  useFrame(({ clock }, delta) => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
       const orbitSpeed = systemData[p + "OrbitSpeed"];
-      pRef.position.x = Math.sin((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
-      pRef.position.z = Math.cos((clock.getElapsedTime() + randomStart) * orbitSpeed) * getPosition(p)[0];
+      pRef.position.x = Math.sin((clock.elapsedTime + randomStart) * orbitSpeed) * getPosition(p)[0];
+      pRef.position.z = Math.cos((clock.elapsedTime + randomStart) * orbitSpeed) * getPosition(p)[0];
     });
 
     starsRef.current.rotation.y += delta * 0.025;
     spacerockInstsRef.current.rotation.y += delta * 0.05;
+    cloudsRef.current.rotation.y += delta * 0.0125;
   });
 
   return (
@@ -306,7 +356,11 @@ const SolarSystem = () => {
             })}
 
             <Instances ref={spacerockInstsRef} geometry={spacerockGeometry()}>
-              <meshStandardMaterial color={new THREE.Color(0x130c18)} roughness={0.9} metalness={0} />
+              <meshStandardMaterial
+                color={systemData.genSpaceRockColor}
+                roughness={systemData.genSpaceRoughness}
+                metalness={systemData.genSpaceMetalness}
+              />
               {data.map((props, i) => (
                 <Spacerock key={i} {...props} scale={[0.05, 0.05, 0.05]} />
               ))}
@@ -343,7 +397,8 @@ const SolarSystem = () => {
         </Float>
       </group>
 
-      <Clouds material={THREE.MeshBasicMaterial}>
+      <Clouds ref={cloudsRef} material={THREE.MeshBasicMaterial}>
+        {/* Cloud 1 */}
         {systemData.cloud1Visible && (
           <Cloud
             seed={systemData.cloud1Seed}
@@ -353,8 +408,10 @@ const SolarSystem = () => {
             color={systemData.cloud1Color}
             fade={systemData.cloud1Fade}
             position={systemData.cloud1Position}
+            rotation={[0, 0, 0]}
           />
         )}
+        {/* Cloud 2 */}
         {systemData.cloud2Visible && (
           <Cloud
             seed={systemData.cloud2Seed}
@@ -364,6 +421,33 @@ const SolarSystem = () => {
             color={systemData.cloud2Color}
             fade={systemData.cloud2Fade}
             position={systemData.cloud2Position}
+            rotation={[0, Math.PI * 0.5, 0]}
+          />
+        )}
+        {/* Cloud 3 */}
+        {systemData.cloud3Visible && (
+          <Cloud
+            seed={systemData.cloud3Seed}
+            bounds={systemData.cloud3Bounds}
+            segments={systemData.cloud3Segments}
+            volume={systemData.cloud3Volume}
+            color={systemData.cloud3Color}
+            fade={systemData.cloud3Fade}
+            position={systemData.cloud3Position}
+            rotation={[0, 0, 0]}
+          />
+        )}
+        {/* Cloud 4 */}
+        {systemData.cloud4Visible && (
+          <Cloud
+            seed={systemData.cloud4Seed}
+            bounds={systemData.cloud4Bounds}
+            segments={systemData.cloud4Segments}
+            volume={systemData.cloud4Volume}
+            color={systemData.cloud4Color}
+            fade={systemData.cloud4Fade}
+            position={systemData.cloud4Position}
+            rotation={[0, Math.PI * 0.5, 0]}
           />
         )}
       </Clouds>
@@ -794,7 +878,7 @@ const Effects = () => {
       tileShiftDirection: [1, 1], // direction of blur
       vignette: true,
       vignetteOffset: 0,
-      vignetteDarkness: 1.3,
+      vignetteDarkness: 1.1,
     },
     { collapsed: true }
   );
@@ -870,9 +954,24 @@ const Planet = forwardRef(({ prefix, config, ...props }, ref) => {
  */
 
 const Scene = () => {
+  const { gl } = useThree();
+
+  useControls(
+    "Scene",
+    {
+      clearColor: {
+        value: "#05071a",
+        onChange: color => {
+          gl.setClearColor(color);
+        },
+      },
+    },
+    { collapsed: true }
+  );
+
   return (
     <>
-      {/* <WrappedOrbitControls /> */}
+      <WrappedOrbitControls />
       <SolarSystem />
       <Effects />
       <Views />
@@ -887,7 +986,7 @@ const Scene = () => {
 const App = () => {
   return (
     <>
-      <Leva hidden collapsed oneLineLabels />
+      <Leva collapsed oneLineLabels />
       <Canvas
         camera={{ fov: 35, position: [0, 3, 11] }}
         gl={{
