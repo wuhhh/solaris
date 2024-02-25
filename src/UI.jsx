@@ -9,7 +9,7 @@ export default function UI(props) {
   const { experienceStarted, setExperienceStarted } = useStore();
   const { setTargetVolume } = useStore();
   const settingsUIRef = useRef(null);
-  const [currentSettingsPanel, setCurrentSettingsPanel] = useState("sounds");
+  const [currentSettingsPanel, setCurrentSettingsPanel] = useState(null);
 
   const startExperience = () => {
     setTargetVolume(1);
