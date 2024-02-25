@@ -25,9 +25,14 @@ const useStore = create(set => ({
   setTargetVolume: targetVolume => set({ targetVolume }),
   // Audio mixer
   audioMixer: {
-    mer: 0.25,
-    jup: 0.75,
-    sat: 0.5,
+    mer: 0.9,
+    ven: 0.9,
+    ear: 0.9,
+    mar: 0.9,
+    jup: 0.9,
+    sat: 0.9,
+    ura: 0.9,
+    nep: 0.9,
   },
   setAudioMixer: (planet, value) => set(state => ({ audioMixer: { ...state.audioMixer, [planet]: value } })),
 }));

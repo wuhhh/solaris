@@ -1,12 +1,12 @@
 .settings {
-  @apply absolute left-[50px] flex items-center pointer-events-none;
+  @apply absolute left-[50px] top-1/2 -translate-y-1/2 flex items-center pointer-events-none;
 
   &.-show {
     @apply pointer-events-auto;
   }
 
   .settings__pane {
-    @apply bg-almost-black/85 backdrop-blur-lg text-cloud-pink border border-cloud-pink rounded-sm p-6 transition-opacity duration-300 opacity-0;
+    @apply bg-almost-black/85 backdrop-blur-lg text-cloud-pink border border-cloud-pink rounded-sm p-6 transition-opacity duration-300 opacity-0 w-full;
   }
 
   &.-show .settings__pane {
@@ -27,5 +27,29 @@
 
   button:disabled:not(.-active) {
     @apply opacity-50;
+  }
+
+  .range {
+    @apply relative w-full h-5;
+
+    input {
+      @apply absolute inset-0 opacity-0 cursor-pointer;
+    }
+
+    .range__track {
+      @apply pointer-events-none absolute inset-0 pl-[18px] after:absolute after:top-1/2 after:inset-x-0 after:h-px after:mt-px after:border-b after:border-space-purple after:border-dashed hover:after:border-solid;
+    }
+
+    .range__thumb {
+      @apply pointer-events-none absolute w-[18px] h-[18px] top-1/2 -translate-x-1/2 -translate-y-1/2 mt-px z-10 rounded-full bg-almost-black border border-space-purple after:absolute after:top-1/2 after:left-1/2 after:-translate-x-1/2 after:-translate-y-1/2 after:w-3 after:h-3 after:rounded-full after:bg-cloud-pink;
+    }
+  }
+
+  .range:hover .range__track:after {
+    @apply border-solid;
+  }
+
+  .range:hover .range__thumb {
+    @apply border-cloud-pink;
   }
 }

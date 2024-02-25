@@ -9,7 +9,7 @@ export default function UI(props) {
   const { experienceStarted, setExperienceStarted } = useStore();
   const { setTargetVolume } = useStore();
   const settingsUIRef = useRef(null);
-  const [currentSettingsPanel, setCurrentSettingsPanel] = useState(null);
+  const [currentSettingsPanel, setCurrentSettingsPanel] = useState("sounds");
 
   const startExperience = () => {
     setTargetVolume(1);
@@ -48,18 +48,18 @@ export default function UI(props) {
     <div className='z-30'>
       <div ref={settingsUIRef} className='absolute left-[26px] inset-y-0 flex items-center'>
         <div className='flex flex-col items-center gap-y-5'>
-          <button onClick={() => handleMenuClick("views")}>
+          <button onClick={() => handleMenuClick("views")} aria-controls='views' aria-expanded={currentSettingsPanel === "views"}>
             <EyeIcon className='text-cloud-pink' />
           </button>
+          <ViewSettings show={currentSettingsPanel === "views"} aria-controls='sounds' aria-expanded={currentSettingsPanel === "sounds"} />
           <button onClick={() => handleMenuClick("sounds")}>
             <TapeIcon className='text-cloud-pink' />
           </button>
+          <AudioSettings show={currentSettingsPanel === "sounds"} />
           <button onClick={() => handleMenuClick("orbits")}>
             <PlanetIcon className='text-cloud-pink' />
           </button>
         </div>
-        <ViewSettings show={currentSettingsPanel === "views"} />
-        <AudioSettings show={currentSettingsPanel === "sounds"} />
       </div>
       {!experienceStarted && (
         <button
