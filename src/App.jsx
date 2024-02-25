@@ -352,7 +352,7 @@ const SolarSystem = () => {
                       uRadiusInner={0.3}
                     />
                   )}
-                  {systemData[planet + "Sound"] && <PlanetAudio url={systemData[planet + "Sound"]} distance={1} loop />}
+                  {systemData[planet + "Sound"] && <PlanetAudio planet={planet} url={systemData[planet + "Sound"]} distance={1} loop />}
                 </Planet>
               );
             })}
@@ -467,6 +467,7 @@ const PlanetAudio = props => {
   const soundRef = useRef();
   const v = useStore();
   const { experienceStarted, targetVolume, setVolume } = useStore();
+  const { audioMixer } = useStore();
 
   // Set the volume to 0 when the component mounts
   useEffect(() => {
@@ -495,6 +496,13 @@ const PlanetAudio = props => {
       },
     });
   }, [targetVolume]);
+
+  // Watch audioMixer and immediately set the volume
+  useEffect(() => {
+    if (soundRef.current) {
+      soundRef.current.setVolume(audioMixer[props.planet]);
+    }
+  }, [audioMixer]);
 
   return <PositionalAudio ref={soundRef} {...props} />;
 };
