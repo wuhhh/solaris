@@ -1,16 +1,36 @@
-# React Three Fiber + Vite Starter
+# Solaris - A 3D interactive, audiovisual solar system
 
-_A simple React Three Fiber + Vite starter with an import-ready CodeSandbox config._
+This project was made during the month of February 2024 as my entry for Bruno Simon's Discord challenge. The theme was "Solar System".
 
-![Preview](/public/preview.gif)
+The sun and each planet are shaded procedurally using a `PlanetMaterial` I created, the only "hard" assets present in the scene are the eight audio loops assigned to the planets.
 
-### Resources:
+[Solaris by Huw Roberts](https://solaris-flame.vercel.app)
 
-- [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/): Three.js Renderer
-- [Drei](https://github.com/pmndrs/drei): React Three Fiber Helpers
-- [Three.js](https://threejs.org/docs/index.html#manual/en/introduction/Creating-a-scene): 3D Engine
-- [Vite](https://vitejs.dev/guide/): Static Web Server
-- [CodeSandbox](https://codesandbox.io/docs/configuration): Online Prototyping Container (optional)
+See more of my creative work at [huwroberts.net](https://huwroberts.net)
+
+## Acknowledgements
+
+- [Three](https://threejs.org/)
+- [React Three Fiber](https://docs.pmnd.rs/react-three-fiber/)
+- [Drei](https://github.com/pmndrs/drei)
+- [Remix icons](https://remixicon.com/)
+- [ThreeJS Journey](https://threejs-journey.com/)
+
+A special thank you to Bruno Simon and the ThreeJS Journey Discord community 👍🏼
+
+## Authors
+
+Huw Roberts
+
+- X [@huwrobertsnet](https://x.com/huwroberts.net)
+- Github [@wuhhh](https://github.com/wuhhh)
+- [huwroberts.net](https://huwroberts.net)
+
+## Screenshots
+
+![Solaris screenshot 1](/public/preview/solaris-sm-1.png)
+![Solaris screenshot 2](/public/preview/solaris-sm-2.png)
+![Solaris screenshot 3](/public/preview/solaris-sm-3.png)
 
 ### Installation
 
@@ -26,5 +46,3 @@ npm run build
 npm run preview
 npm run sandbox
 ```
-### CodeSandbox
-To create a sandbox from this starter, [import your repository URL](https://codesandbox.io/dashboard/repositories) (this repo works too), or [fork this template](https://codesandbox.io/s/react-three-fiber-vite-starter-r1tgld).
