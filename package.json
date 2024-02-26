@@ -22,6 +22,7 @@
     "postprocessing": "^6.34.3",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
+    "react-merge-refs": "^2.1.1",
     "three": "^0.161.0",
     "three-custom-shader-material": "^5.4.0",
     "zustand": "^4.5.0"
