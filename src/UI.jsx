@@ -1,11 +1,11 @@
 import { useEffect, useRef, useState } from "react";
 import useStore from "./stores/useStore";
-import { ArrowRightTinyIcon, EyeIcon, PlanetIcon, SpeakerIcon, TapeIcon } from "./Icons";
+import { EyeIcon, PlanetIcon, SpeakerIcon, TapeIcon } from "./Icons";
 import LogoMark from "./LogoMark";
 import { ViewSettings, AudioSettings } from "./SettingsPanels";
 
 export default function UI(props) {
-  const { preset, setPreset, presetIsTransitioning, setPresetIsTransitioning } = useStore();
+  const { setAudioMixerSnapshot, muted, setMuted, muteAll, restoreSnapshot } = useStore();
   const { experienceStarted, setExperienceStarted } = useStore();
   const { setTargetVolume } = useStore();
   const settingsUIRef = useRef(null);
@@ -44,6 +44,21 @@ export default function UI(props) {
     };
   }, []);
 
+  const mute = () => {
+    setAudioMixerSnapshot();
+    setMuted(true);
+    muteAll();
+  };
+
+  const unmute = () => {
+    restoreSnapshot();
+    setMuted(false);
+  };
+
+  const handleMuteUnmute = () => {
+    muted ? unmute() : mute();
+  };
+
   return (
     <div className='z-30'>
       <div ref={settingsUIRef} className='absolute left-[26px] inset-y-0 flex items-center'>
@@ -56,20 +71,34 @@ export default function UI(props) {
             <TapeIcon className='text-cloud-pink' />
           </button>
           <AudioSettings show={currentSettingsPanel === "sounds"} />
-          <button onClick={() => handleMenuClick("orbits")}>
+          {/* <button onClick={() => handleMenuClick("orbits")}>
             <PlanetIcon className='text-cloud-pink' />
-          </button>
+          </button> */}
         </div>
       </div>
       {!experienceStarted && (
-        <button
-          onClick={() => startExperience()}
-          className='pointer-events-auto absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-orange-50 text-black'
-        >
-          Start
-        </button>
+        <div className='pointer-events-auto absolute top-3/4 left-1/2 -translate-x-1/2 -translate-y-1/2 flex flex-col text-center'>
+          <button
+            onClick={() => startExperience()}
+            className='flex items-center justify-center px-8 py-2 mb-px rounded-sm bg-almost-black/80 text-cloud-pink text-center'
+          >
+            Start with audio
+          </button>
+          <button
+            onClick={() => {
+              mute();
+              startExperience();
+            }}
+            className='flex items-center justify-center px-8 py-2 mb-px rounded-sm bg-almost-black/80 text-cloud-pink text-center'
+          >
+            Just the visuals
+          </button>
+        </div>
       )}
       <LogoMark />
+      <button className='absolute bottom-[26px] right-[26px]' onClick={handleMuteUnmute}>
+        <SpeakerIcon className={`w-[18px] ${muted ? "text-cloud-pink/50" : "text-cloud-pink"}`} />
+      </button>
     </div>
   );
 }

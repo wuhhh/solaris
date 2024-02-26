@@ -29,16 +29,23 @@ const useStore = create(set => ({
   setTargetVolume: targetVolume => set({ targetVolume }),
   // Audio mixer
   audioMixer: {
-    mer: Math.random(),
-    ven: Math.random(),
-    ear: Math.random(),
-    mar: Math.random(),
-    jup: Math.random(),
-    sat: Math.random(),
-    ura: Math.random(),
-    nep: Math.random(),
+    mer: Math.random() * 0.75 + 0.25,
+    ven: Math.random() * 0.75 + 0.25,
+    ear: Math.random() * 0.75 + 0.25,
+    mar: Math.random() * 0.75 + 0.25,
+    jup: Math.random() * 0.75 + 0.25,
+    sat: Math.random() * 0.75 + 0.25,
+    ura: Math.random() * 0.75 + 0.25,
+    nep: Math.random() * 0.75 + 0.25,
   },
   setAudioMixer: (planet, value) => set(state => ({ audioMixer: { ...state.audioMixer, [planet]: value } })),
+  audioMixerSnapshot: null,
+  setAudioMixerSnapshot: () => set(state => ({ audioMixerSnapshot: state.audioMixer })),
+  muted: false,
+  setMuted: muted => set({ muted }),
+  toggleMuted: () => set(state => ({ muted: !state.muted })),
+  muteAll: () => set(state => ({ audioMixer: { mer: 0, ven: 0, ear: 0, mar: 0, jup: 0, sat: 0, ura: 0, nep: 0 } })),
+  restoreSnapshot: () => set(state => ({ audioMixer: state.audioMixerSnapshot })),
 }));
 
 export default useStore;
