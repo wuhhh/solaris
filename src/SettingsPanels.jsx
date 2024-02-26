@@ -17,10 +17,10 @@ const Panel = props => {
 export function ViewSettings(props) {
   const { preset, setPreset, presetIsTransitioning, setPresetIsTransitioning } = useStore();
 
-  const changePreset = preset => {
-    if (!presetIsTransitioning) {
+  const changePreset = newPreset => {
+    if (!presetIsTransitioning && newPreset !== preset) {
       setPresetIsTransitioning(true);
-      setPreset(preset);
+      setPreset(newPreset);
     }
   };
 

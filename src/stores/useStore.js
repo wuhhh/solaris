@@ -3,6 +3,10 @@ import { create } from "zustand";
 const audio = document.createElement("audio");
 
 const useStore = create(set => ({
+  // The planet codes
+  planetCodes: ["mer", "ven", "ear", "mar", "jup", "sat", "ura", "nep"],
+  planetRefs: {},
+  setPlanetRef: (planet, ref) => set(state => ({ planetRefs: { ...state.planetRefs, [planet]: ref } })),
   // Whether the experience has started
   experienceStarted: false,
   setExperienceStarted: experienceStarted => set({ experienceStarted }),
@@ -25,14 +29,14 @@ const useStore = create(set => ({
   setTargetVolume: targetVolume => set({ targetVolume }),
   // Audio mixer
   audioMixer: {
-    mer: 0.9,
-    ven: 0.9,
-    ear: 0.9,
-    mar: 0.9,
-    jup: 0.9,
-    sat: 0.9,
-    ura: 0.9,
-    nep: 0.9,
+    mer: Math.random(),
+    ven: Math.random(),
+    ear: Math.random(),
+    mar: Math.random(),
+    jup: Math.random(),
+    sat: Math.random(),
+    ura: Math.random(),
+    nep: Math.random(),
   },
   setAudioMixer: (planet, value) => set(state => ({ audioMixer: { ...state.audioMixer, [planet]: value } })),
 }));

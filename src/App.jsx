@@ -22,7 +22,7 @@ import { data } from "./stores/spacerockData";
 
 const SolarSystem = () => {
   const setSolarSystemRef = useStore(state => state.setSolarSystemRef);
-  const { experienceStarted } = useStore();
+  const { audioMixer, experienceStarted, solarSystemRef } = useStore();
   const { width } = useThree(state => state.viewport);
   const [randomStart] = useMemo(() => {
     // const randomStart = 1;
@@ -157,7 +157,6 @@ const SolarSystem = () => {
           jupScale: 0.1,
           // jupColor: "#ff6900",
           jupOrbitSpeed: 0.3,
-          jupSound: "/sounds/outside.ogg",
           ...getPlanetControls("jup"),
         },
         c
@@ -167,7 +166,6 @@ const SolarSystem = () => {
           satScale: 0.07,
           // satColor: "#8d89e2",
           satOrbitSpeed: 0.2,
-          satSound: "/sounds/tape.ogg",
           satRingColor: "#e6a97e",
           satRingBloomIntensity: 4,
           ...getPlanetControls("sat"),
@@ -297,6 +295,54 @@ const SolarSystem = () => {
     c
   );
 
+  const { camera, scene } = useThree();
+  const headphonesCameraRef = useRef(new THREE.PerspectiveCamera());
+
+  useEffect(() => {
+    // Manually attach positional audio to each planet
+    planets.forEach(planet => {
+      const listener = new THREE.AudioListener();
+      // const headphonesCamera = new THREE.Camera();
+      headphonesCameraRef.current.position.set(0, 0, 0);
+      headphonesCameraRef.current.add(listener);
+      scene.add(headphonesCameraRef.current);
+      const sound = new THREE.PositionalAudio(listener);
+
+      // Load the sound file
+      const audioLoader = new THREE.AudioLoader();
+      audioLoader.load(`/sounds/${planet}.wav`, buffer => {
+        sound.setBuffer(buffer);
+        sound.setRefDistance(1);
+        sound.setLoop(true);
+        sound.setVolume(1);
+      });
+
+      // Attach the sound to the planet
+      planetsRef.current[planet].add(sound);
+    });
+  }, []);
+
+  useEffect(() => {
+    if (experienceStarted) {
+      // Start the audio
+      planets.forEach(planet => {
+        const sound = planet !== "sat" ? planetsRef.current[planet].children[0] : planetsRef.current[planet].children[1];
+        if (sound?.play) {
+          sound.play();
+        }
+      });
+    }
+  }, [experienceStarted]);
+
+  useEffect(() => {
+    planets.forEach(planet => {
+      const sound = planet !== "sat" ? planetsRef.current[planet].children[0] : planetsRef.current[planet].children[1];
+      if (sound?.play) {
+        sound.setVolume(audioMixer[planet]);
+      }
+    });
+  }, [audioMixer]);
+
   useFrame(({ clock }, delta) => {
     planets.forEach(p => {
       const pRef = planetsRef.current[p];
@@ -308,6 +354,15 @@ const SolarSystem = () => {
     starsRef.current.rotation.y += delta * 0.025;
     spacerockInstsRef.current.rotation.y += delta * 0.05;
     cloudsRef.current.rotation.y += delta * 0.0125;
+
+    // Get main camera lookAt vector
+    const lookAt = new THREE.Vector3();
+    camera.getWorldDirection(lookAt);
+
+    // Set the headphones camera to look at the same vector
+    headphonesCameraRef.current.lookAt(lookAt);
+    // headphonesCameraRef.current.position.copy(sunRef.current.position);
+    // headphonesCameraRef.current.rotation.copy(solarSystemRef.rotation);
   });
 
   return (
@@ -352,7 +407,7 @@ const SolarSystem = () => {
                       uRadiusInner={0.3}
                     />
                   )}
-                  {systemData[planet + "Sound"] && <PlanetAudio planet={planet} url={systemData[planet + "Sound"]} distance={1} loop />}
+                  {false && <PlanetAudio planet={planet} url={`/sounds/${planet}.wav`} loop />}
                 </Planet>
               );
             })}
@@ -482,7 +537,7 @@ const PlanetAudio = props => {
   }, [experienceStarted]);
 
   // Watch targetVolume and tween the volume to it when it changes
-  useGSAP(() => {
+  /* useGSAP(() => {
     gsap.to(v, {
       duration: 4,
       volume: targetVolume,
@@ -495,7 +550,7 @@ const PlanetAudio = props => {
         }
       },
     });
-  }, [targetVolume]);
+  }, [targetVolume]); */
 
   // Watch audioMixer and immediately set the volume
   useEffect(() => {
@@ -939,7 +994,7 @@ const WrappedOrbitControls = () => {
     orbitControlsRef.current.enable = !presetIsTransitioning;
   }, [presetIsTransitioning]);
 
-  return <OrbitControls ref={orbitControlsRef} enablePan={false} enableZoom={false} />;
+  return <OrbitControls ref={orbitControlsRef} enablePan={true} enableZoom={true} />;
 };
 
 /**
