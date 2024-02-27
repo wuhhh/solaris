@@ -1,7 +1,7 @@
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from "react";
 import * as THREE from "three";
 import { Canvas, useFrame, useThree } from "@react-three/fiber";
-import { Cloud, Clouds, Float, Instances, Instance, OrbitControls, Plane, Sphere, Stars, PositionalAudio } from "@react-three/drei";
+import { Cloud, Clouds, Float, Instances, Instance, OrbitControls, Plane, Sphere, Stars } from "@react-three/drei";
 import { folder, Leva, useControls } from "leva";
 import { Bloom, EffectComposer, Noise, TiltShift2, Vignette } from "@react-three/postprocessing";
 import gsap from "gsap";
@@ -22,7 +22,7 @@ import { Loader } from "./Loader";
 
 const SolarSystem = () => {
   const setSolarSystemRef = useStore(state => state.setSolarSystemRef);
-  const { audioMixer, experienceStarted, solarSystemRef } = useStore();
+  const { audioMixer, experienceStarted, supportsOgg } = useStore();
   const { width } = useThree(state => state.viewport);
   const [randomStart] = useMemo(() => {
     const randomStart = Math.random() * 1000;
@@ -312,7 +312,8 @@ const SolarSystem = () => {
 
       // Load the sound file
       const audioLoader = new THREE.AudioLoader();
-      audioLoader.load(`/sounds/${planet}.wav`, buffer => {
+      const format = supportsOgg ? ".ogg" : ".wav";
+      audioLoader.load(`/sounds/${planet}${format}`, buffer => {
         sound.setBuffer(buffer);
         sound.setRefDistance(2);
         sound.setLoop(true);
