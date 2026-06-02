@@ -313,7 +313,7 @@ const SolarSystem = () => {
       // Load the sound file
       const audioLoader = new THREE.AudioLoader();
       const format = supportsOgg ? ".ogg" : ".wav";
-      audioLoader.load(`/sounds/${planet}${format}`, buffer => {
+      audioLoader.load(`/solaris/sounds/${planet}${format}`, buffer => {
         sound.setBuffer(buffer);
         sound.setRefDistance(2);
         sound.setLoop(true);

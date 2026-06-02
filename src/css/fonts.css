@@ -3,8 +3,8 @@
   font-style: normal;
   font-weight: 400;
   font-display: swap;
-  src: url("/fonts/ballinger-mono/ballingermono-regular.woff2") format("woff2"),
-    url("/fonts/ballinger-mono/ballingermono-regular.woff") format("woff");
+  src: url("/solaris/fonts/ballinger-mono/ballingermono-regular.woff2") format("woff2"),
+    url("/solaris/fonts/ballinger-mono/ballingermono-regular.woff") format("woff");
 }
 
 @font-face {
@@ -12,6 +12,6 @@
   font-style: normal;
   font-weight: 700;
   font-display: swap;
-  src: url("/fonts/ballinger-mono/ballingermono-bold.woff2") format("woff2"),
-    url("/fonts/ballinger-mono/ballingermono-bold.woff") format("woff");
+  src: url("/solaris/fonts/ballinger-mono/ballingermono-bold.woff2") format("woff2"),
+    url("/solaris/fonts/ballinger-mono/ballingermono-bold.woff") format("woff");
 }
